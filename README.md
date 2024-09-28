@@ -1,5 +1,8 @@
 # React + Java Servlets Setup Guide
 
+![localhost_5173_](https://github.com/user-attachments/assets/439ed129-f1c9-42f1-b43b-f54bfa071ec6)
+
+
 To get started with the SmartHomes project, follow these steps:
 
 1. **Place the Source Code**:
