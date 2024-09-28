@@ -1,0 +1,97 @@
+// Connect to MongoDB and create/use the smarthomes database
+use smarthomes;
+
+// Create a collection for product reviews
+db.createCollection("productReviews", {
+   validator: {
+      $jsonSchema: {
+         bsonType: "object",
+         required: ["productId", "productModelName", "productCategory", "productPrice", "storeID", "storeZip", "storeCity", "storeState", "productOnSale", "manufacturerName", "manufacturerRebate", "userID", "userAge", "userGender", "userOccupation", "reviewRating", "reviewDate", "reviewText"],
+         properties: {
+            productId: {
+               bsonType: "string",
+               description: "must be a string and is required"
+            },
+            productModelName: {
+               bsonType: "string",
+               description: "must be a string and is required"
+            },
+            productCategory: {
+               bsonType: "string",
+               description: "must be a string and is required"
+            },
+            productPrice: {
+               bsonType: "decimal",
+               description: "must be a decimal and is required"
+            },
+            storeID: {
+               bsonType: "string",
+               description: "must be a string and is required"
+            },
+            storeZip: {
+               bsonType: "string",
+               description: "must be a string and is required"
+            },
+            storeCity: {
+               bsonType: "string",
+               description: "must be a string and is required"
+            },
+            storeState: {
+               bsonType: "string",
+               description: "must be a string and is required"
+            },
+            productOnSale: {
+               bsonType: "bool",
+               description: "must be a boolean and is required"
+            },
+            manufacturerName: {
+               bsonType: "string",
+               description: "must be a string and is required"
+            },
+            manufacturerRebate: {
+               bsonType: "bool",
+               description: "must be a boolean and is required"
+            },
+            userID: {
+               bsonType: "string",
+               description: "must be a string and is required"
+            },
+            userAge: {
+               bsonType: "int",
+               description: "must be an integer and is required"
+            },
+            userGender: {
+               bsonType: "string",
+               description: "must be a string and is required"
+            },
+            userOccupation: {
+               bsonType: "string",
+               description: "must be a string and is required"
+            },
+            reviewRating: {
+               bsonType: "int",
+               minimum: 1,
+               maximum: 5,
+               description: "must be an integer between 1 and 5 and is required"
+            },
+            reviewDate: {
+               bsonType: "date",
+               description: "must be a date and is required"
+            },
+            reviewText: {
+               bsonType: "string",
+               description: "must be a string and is required"
+            }
+         }
+      }
+   }
+});
+
+// Create indexes for frequently queried fields
+db.productReviews.createIndex({ productId: 1 });
+db.productReviews.createIndex({ productModelName: 1 });
+db.productReviews.createIndex({ productCategory: 1 });
+db.productReviews.createIndex({ storeID: 1 });  
+db.productReviews.createIndex({ userID: 1 });
+db.productReviews.createIndex({ reviewDate: -1 });
+db.productReviews.createIndex({ reviewRating: -1 });

@@ -1,0 +1,182 @@
+[
+  {
+    "id": 1,
+    "name": "River North Store",
+    "address": "300 W Erie St",
+    "zipCode": "60654"
+  },
+  {
+    "id": 2,
+    "name": "Loop Store",
+    "address": "100 W Monroe St",
+    "zipCode": "60603"
+  },
+  {
+    "id": 3,
+    "name": "Lincoln Park Store",
+    "address": "2500 N Clark St",
+    "zipCode": "60614"
+  },
+  {
+    "id": 4,
+    "name": "Wicker Park Store",
+    "address": "1500 N Damen Ave",
+    "zipCode": "60622"
+  },
+  {
+    "id": 5,
+    "name": "Lakeview Store",
+    "address": "3200 N Broadway",
+    "zipCode": "60657"
+  },
+  {
+    "id": 6,
+    "name": "Logan Square Store",
+    "address": "2500 N Milwaukee Ave",
+    "zipCode": "60647"
+  },
+  {
+    "id": 7,
+    "name": "Hyde Park Store",
+    "address": "53rd St & Hyde Park Blvd",
+    "zipCode": "60615"
+  },
+  {
+    "id": 8,
+    "name": "Ukrainian Village Store",
+    "address": "1000 N Western Ave",
+    "zipCode": "60622"
+  },
+  {
+    "id": 9,
+    "name": "Andersonville Store",
+    "address": "5200 N Clark St",
+    "zipCode": "60640"
+  },
+  {
+    "id": 10,
+    "name": "Streeterville Store",
+    "address": "300 E Ontario St",
+    "zipCode": "60611"
+  },
+  {
+    "id": 11,
+    "name": "Gold Coast Store",
+    "address": "900 N Michigan Ave",
+    "zipCode": "60611"
+  },
+  {
+    "id": 12,
+    "name": "North Center Store",
+    "address": "4700 N Western Ave",
+    "zipCode": "60625"
+  },
+  {
+    "id": 13,
+    "name": "Pilsen Store",
+    "address": "1800 S Blue Island Ave",
+    "zipCode": "60608"
+  },
+  {
+    "id": 14,
+    "name": "Wrigleyville Store",
+    "address": "3600 N Clark St",
+    "zipCode": "60613"
+  },
+  {
+    "id": 15,
+    "name": "Lakeview East Store",
+    "address": "3100 N Broadway",
+    "zipCode": "60657"
+  },
+  {
+    "id": 16,
+    "name": "West Loop Store",
+    "address": "1000 W Randolph St",
+    "zipCode": "60607"
+  },
+  {
+    "id": 17,
+    "name": "Little Italy Store",
+    "address": "1000 W Taylor St",
+    "zipCode": "60607"
+  },
+  {
+    "id": 18,
+    "name": "Chinatown Store",
+    "address": "2300 S Wentworth Ave",
+    "zipCode": "60616"
+  },
+  {
+    "id": 19,
+    "name": "Edgewater Store",
+    "address": "5300 N Broadway",
+    "zipCode": "60640"
+  },
+  {
+    "id": 20,
+    "name": "Rogers Park Store",
+    "address": "6900 N Sheridan Rd",
+    "zipCode": "60626"
+  },
+  {
+    "id": 21,
+    "name": "Lincoln Square Store",
+    "address": "4700 N Lincoln Ave",
+    "zipCode": "60625"
+  },
+  {
+    "id": 22,
+    "name": "Avondale Store",
+    "address": "3100 N Pulaski Rd",
+    "zipCode": "60641"
+  },
+  {
+    "id": 23,
+    "name": "West Ridge Store",
+    "address": "6300 N Western Ave",
+    "zipCode": "60659"
+  },
+  {
+    "id": 24,
+    "name": "Irving Park Store",
+    "address": "4000 W Irving Park Rd",
+    "zipCode": "60641"
+  },
+  {
+    "id": 25,
+    "name": "Portage Park Store",
+    "address": "4000 N Long Ave",
+    "zipCode": "60639"
+  },
+  {
+    "id": 26,
+    "name": "Albany Park Store",
+    "address": "4700 N Kedzie Ave",
+    "zipCode": "60625"
+  },
+  {
+    "id": 27,
+    "name": "Jefferson Park Store",
+    "address": "4900 N Milwaukee Ave",
+    "zipCode": "60646"
+  },
+  {
+    "id": 28,
+    "name": "Forest Glen Store",
+    "address": "5700 N Western Ave",
+    "zipCode": "60659"
+  },
+  {
+    "id": 29,
+    "name": "Bridgeport Store",
+    "address": "3100 S Halsted St",
+    "zipCode": "60608"
+  },
+  {
+    "id": 30,
+    "name": "South Loop Store",
+    "address": "1200 S Michigan Ave",
+    "zipCode": "60605"
+  }
+]
