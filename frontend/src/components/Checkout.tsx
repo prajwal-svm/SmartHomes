@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react'
 import { ChevronRight, CreditCard, MapPin, Truck, User } from 'lucide-react'
 import Confetti from 'react-confetti'
-import { Link } from 'react-router-dom'
 
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
@@ -88,10 +87,10 @@ export default function CheckoutPage({products}) {
             shippingCity: deliveryMethod === 'home' ? formData.city : null,
             shippingState: deliveryMethod === 'home' ? formData.state : null,
             shippingZipCode: deliveryMethod === 'home' ? formData.zipCode : null,
-            storeStreet: deliveryMethod === 'store' ? stores.find(store => store.id.toString() === formData.storeLocation)?.Street || '123 Main St' : null,
-            storeCity: deliveryMethod === 'store' ? stores.find(store => store.id.toString() === formData.storeLocation)?.City || 'Chicago' : null,
-            storeState: deliveryMethod === 'store' ? stores.find(store => store.id.toString() === formData.storeLocation)?.State || 'Illinois' : null,
-            storeZipCode: deliveryMethod === 'store' ? stores.find(store => store.id.toString() === formData.storeLocation)?.ZipCode || '60601' : null,
+            storeStreet: deliveryMethod === 'store' ? stores.find(store => store.StoreID.toString() === formData.storeLocation)?.Street || '123 Main St' : null,
+            storeCity: deliveryMethod === 'store' ? stores.find(store => store.StoreID.toString() === formData.storeLocation)?.City || 'Chicago' : null,
+            storeState: deliveryMethod === 'store' ? stores.find(store => store.StoreID.toString() === formData.storeLocation)?.State || 'Illinois' : null,
+            storeZipCode: deliveryMethod === 'store' ? stores.find(store => store.StoreID.toString() === formData.storeLocation)?.ZipCode || '60601' : null,
             creditCardNumber: formData.creditCardNumber
         }
 
