@@ -37,7 +37,7 @@ import Product from "./Product";
 export default function Dashboard({ products }) {
     const [_products, setProducts] = useState(products);
     const [cart, setCart] = useState(() => {
-        const user = JSON.parse(localStorage.getItem('user'));
+        const user = JSON.parse(sessionStorage.getItem('user'));
         return user?.cart || {};
     });
     const [sortOption, setSortOption] = useState("default");
@@ -57,9 +57,9 @@ export default function Dashboard({ products }) {
                 newCart[id] = { quantity: total };
             }
 
-            const user = JSON.parse(localStorage.getItem('user'));
+            const user = JSON.parse(sessionStorage.getItem('user'));
             user.cart = newCart;
-            localStorage.setItem('user', JSON.stringify(user));
+            sessionStorage.setItem('user', JSON.stringify(user));
 
             return newCart;
         });
@@ -110,9 +110,9 @@ export default function Dashboard({ products }) {
 
     if (products.length === 0) {
         return (
-            <motion.div 
-                initial={{ opacity: 0 }} 
-                animate={{ opacity: 1 }} 
+            <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 className="flex min-h-screen w-full flex-col"
             >
@@ -146,7 +146,7 @@ export default function Dashboard({ products }) {
                                 </Select>
                             </div>
                         </div>
-                        <motion.p 
+                        <motion.p
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.5 }}
@@ -164,9 +164,9 @@ export default function Dashboard({ products }) {
     }
 
     return (
-        <motion.div 
-            initial={{ opacity: 0 }} 
-            animate={{ opacity: 1 }} 
+        <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="flex min-h-screen w-full flex-col"
         >
@@ -216,9 +216,9 @@ export default function Dashboard({ products }) {
                                     <span className="sr-only">Toggle user menu</span>
                                 </Button>
                                 <div className="text-sm font-medium text-left">
-                                    {localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')).FullName : 'Guest'}
+                                    {sessionStorage.getItem('user') ? JSON.parse(sessionStorage.getItem('user')).FullName : 'Guest'}
                                     <div className="text-xs text-muted-foreground text-left capitalize">
-                                        {localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')).UserType : ''}
+                                        {sessionStorage.getItem('user') ? JSON.parse(sessionStorage.getItem('user')).UserType : ''}
                                     </div>
                                 </div>
                             </div>
@@ -227,8 +227,8 @@ export default function Dashboard({ products }) {
                             <DropdownMenuLabel>My Account</DropdownMenuLabel>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem onClick={() => {
-                                localStorage.removeItem('auth');
-                                localStorage.removeItem('user');
+                                sessionStorage.removeItem('auth');
+                                sessionStorage.removeItem('user');
                                 window.location.href = '/signin';
                             }}>Logout</DropdownMenuItem>
                         </DropdownMenuContent>
@@ -267,7 +267,7 @@ export default function Dashboard({ products }) {
                         </div>
                     </div>
                     {_products.length === 0 && (
-                        <motion.p 
+                        <motion.p
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.5 }}
@@ -277,7 +277,7 @@ export default function Dashboard({ products }) {
                         </motion.p>
                     )}
                     <AnimatePresence>
-                        <motion.div 
+                        <motion.div
                             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10"
                             initial="hidden"
                             animate="visible"
@@ -297,11 +297,11 @@ export default function Dashboard({ products }) {
                                         visible: { opacity: 1, y: 0 }
                                     }}
                                 >
-                                    <Product 
-                                        {...product} 
-                                        setCart={handleCartUpdate} 
-                                        quantity={cart[product.ProductID]?.quantity || 0} 
-                                        products={products} 
+                                    <Product
+                                        {...product}
+                                        setCart={handleCartUpdate}
+                                        quantity={cart[product.ProductID]?.quantity || 0}
+                                        products={products}
                                     />
                                 </motion.div>
                             ))}

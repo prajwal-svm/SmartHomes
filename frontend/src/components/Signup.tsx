@@ -29,7 +29,7 @@ export default function Signup({ setAuth }) {
     const { toast } = useToast();
 
     useEffect(() => {
-        if (localStorage.getItem('auth')) {
+        if (sessionStorage.getItem('auth')) {
             window.location.href = '/';
         }
     }, []);
@@ -66,8 +66,8 @@ export default function Signup({ setAuth }) {
 
             if (data.success) {
                 setAuth(true);
-                localStorage.setItem('auth', 'true');
-                localStorage.setItem('user', JSON.stringify(data.user));
+                sessionStorage.setItem('auth', 'true');
+                sessionStorage.setItem('user', JSON.stringify(data.user));
                 window.location.href = '/';
             } else {
                 toast({

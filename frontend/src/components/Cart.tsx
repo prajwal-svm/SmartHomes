@@ -12,7 +12,7 @@ const IMG = 'https://images.ctfassets.net/a3peezndovsu/4UGQZPM2YHuSmgWnmIKy19/0f
 export default function Cart({ products }) {
 
     const [cartItems, setCartItems] = useState(
-        Object.entries(JSON.parse(localStorage.getItem('user'))?.cart || {}).reduce((acc, [key, value]) => {
+        Object.entries(JSON.parse(sessionStorage.getItem('user'))?.cart || {}).reduce((acc, [key, value]) => {
             const product = products.find(product => product.ProductID === +key);
             if (product) {
                 acc[product.ProductID] = {
@@ -26,13 +26,13 @@ export default function Cart({ products }) {
 
     const updateQuantity = (id: number | string, quantity: number) => {
         const total = (cartItems[id]?.quantity || 0) + quantity;
-        console.log({total, id, cartItems, quantity});
+        console.log({ total, id, cartItems, quantity });
         if (total === 0) {
             const newCart = { ...cartItems };
             delete newCart[id];
-            const user = JSON.parse(localStorage.getItem('user'));
+            const user = JSON.parse(sessionStorage.getItem('user'));
             user.cart = newCart;
-            localStorage.setItem('user', JSON.stringify(user));
+            sessionStorage.setItem('user', JSON.stringify(user));
             setCartItems(newCart)
             return;
         }
@@ -43,9 +43,9 @@ export default function Cart({ products }) {
                 quantity: total
             }
         };
-        const user = JSON.parse(localStorage.getItem('user'));
+        const user = JSON.parse(sessionStorage.getItem('user'));
         user.cart = newCart;
-        localStorage.setItem('user', JSON.stringify(user));
+        sessionStorage.setItem('user', JSON.stringify(user));
         setCartItems(newCart)
     }
 
@@ -53,7 +53,7 @@ export default function Cart({ products }) {
 
     const total = (subtotal * 1.3).toFixed(2)
 
-    console.log({cartItems})
+    console.log({ cartItems })
 
     return (
         <div className="container mx-auto px-4 py-8">

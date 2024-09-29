@@ -55,7 +55,7 @@ const components = [
 ]
 
 export default function Navigation() {
-    const userType = JSON.parse(localStorage.getItem('user'))?.UserType?.toLowerCase();
+    const userType = JSON.parse(sessionStorage.getItem('user'))?.UserType?.toLowerCase();
 
     return (
         <NavigationMenu className="bg-white">

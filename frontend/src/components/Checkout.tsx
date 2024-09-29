@@ -14,11 +14,11 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { Checkbox } from '@/components/ui/checkbox'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
 
-export default function CheckoutPage({products}) {
+export default function CheckoutPage({ products }) {
     const [deliveryMethod, setDeliveryMethod] = useState('home')
     const [formData, setFormData] = useState({
-        name: `${JSON.parse(localStorage.getItem('user'))?.FullName || ''}`,
-        email: JSON.parse(localStorage.getItem('user'))?.Email || '',
+        name: `${JSON.parse(sessionStorage.getItem('user'))?.FullName || ''}`,
+        email: JSON.parse(sessionStorage.getItem('user'))?.Email || '',
         phone: '',
         address: '',
         city: '',
@@ -40,7 +40,7 @@ export default function CheckoutPage({products}) {
     const [stores, setStores] = useState([]);
 
     const [cartItems, setCartItems] = useState(
-        (Object.entries(JSON.parse(localStorage.getItem('user'))?.cart || {})).map(([key, value]) => ({
+        (Object.entries(JSON.parse(sessionStorage.getItem('user'))?.cart || {})).map(([key, value]) => ({
             ...value,
             price: products.find(product => +product.ProductID === +key)?.ProductPrice,
             ...products.find(product => +product.ProductID === +key)
@@ -55,7 +55,7 @@ export default function CheckoutPage({products}) {
     useEffect(() => {
         const fetchStores = async () => {
             try {
-                const response = await  fetch('http://localhost:8080/SmartHomes/api/stores');
+                const response = await fetch('http://localhost:8080/SmartHomes/api/stores');
                 const data = await response.json();
                 setStores(data);
             } catch (error) {
@@ -73,14 +73,14 @@ export default function CheckoutPage({products}) {
         e.preventDefault()
 
         const orderData = {
-            customerID: JSON.parse(localStorage.getItem('user'))?.CustomerID,
+            customerID: JSON.parse(sessionStorage.getItem('user'))?.CustomerID,
             storeID: deliveryMethod === 'store' ? formData.storeLocation : null,
             products: cartItems.map(item => ({
                 productID: item.ProductID,
                 quantity: item.quantity,
                 price: item.price,
                 discount: (item.price * item.quantity * 0.15).toFixed(2),
-                shippingCost: deliveryMethod === 'home' ? 10 : 0, 
+                shippingCost: deliveryMethod === 'home' ? 10 : 0,
                 totalAmount: (item.price * item.quantity * 0.85 + (deliveryMethod === 'home' ? 10 : 0)).toFixed(2)
             })),
             shippingStreet: deliveryMethod === 'home' ? formData.address : null,
@@ -111,9 +111,9 @@ export default function CheckoutPage({products}) {
                 setShowConfetti(true)
 
                 // Clear the cart
-                const user = JSON.parse(localStorage.getItem('user'))
+                const user = JSON.parse(sessionStorage.getItem('user'))
                 user.cart = {}
-                localStorage.setItem('user', JSON.stringify(user))
+                sessionStorage.setItem('user', JSON.stringify(user))
             } else {
                 console.error('Failed to place order')
             }
@@ -170,7 +170,7 @@ export default function CheckoutPage({products}) {
                             <div className="space-y-4">
                                 <div>
                                     <Label htmlFor="name">Full Name</Label>
-                                    <Input id="name" name="name" value={formData.name} onChange={handleInputChange} required  disabled={JSON.parse(localStorage.getItem('user'))?.firstName} />
+                                    <Input id="name" name="name" value={formData.name} onChange={handleInputChange} required disabled={JSON.parse(sessionStorage.getItem('user'))?.firstName} />
                                 </div>
                                 <div>
                                     <Label htmlFor="email">Email</Label>
@@ -181,7 +181,7 @@ export default function CheckoutPage({products}) {
                                         value={formData.email}
                                         onChange={handleInputChange}
                                         required
-                                        disabled={JSON.parse(localStorage.getItem('user'))?.email}
+                                        disabled={JSON.parse(sessionStorage.getItem('user'))?.email}
                                     />
                                 </div>
                                 <div>
@@ -471,8 +471,8 @@ export default function CheckoutPage({products}) {
                             <Label className="text-left">Total</Label>
                             <span className="col-span-3">${totalAmount.toFixed(2)}</span>
                         </div>
-                        </div>
-                        <div>
+                    </div>
+                    <div>
                         <div className="mt-4">
                             <h3 className="text-lg font-semibold">Order Items</h3>
                             <ul className='space-y-2 bg-gray-100 p-4 rounded-lg'>

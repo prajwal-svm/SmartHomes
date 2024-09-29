@@ -16,7 +16,7 @@ import Trending from './components/Trending';
 import { Loader2, ShoppingBag, Package, Truck } from 'lucide-react';
 
 function App() {
-  const [auth, setAuth] = useState(localStorage.getItem('auth') || false);
+  const [auth, setAuth] = useState(sessionStorage.getItem('auth') || false);
   const [products, setProducts] = useState([])
 
   const fetchProducts = async () => {

@@ -90,7 +90,7 @@ export default function OrdersView({ products }: { products: Product[] }) {
     const [reviewForm, setReviewForm] = useState<Review | null>(null)
     const [selectedRating, setSelectedRating] = useState(0)
     const [hoveredRating, setHoveredRating] = useState(0)
-    const [user, _] = useState<User>(JSON.parse(localStorage.getItem('user') || '{}'))
+    const [user, _] = useState<User>(JSON.parse(sessionStorage.getItem('user') || '{}'))
 
     const { toast } = useToast()
 
