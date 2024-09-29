@@ -1,6 +1,6 @@
 # React + Java Servlets Setup Guide
 
-![localhost_5173_](https://github.com/user-attachments/assets/439ed129-f1c9-42f1-b43b-f54bfa071ec6)
+![smart_homes](https://github.com/user-attachments/assets/770beb3a-bc3e-4e97-9c4c-5954a6ff8469)
 
 > Apache Tomcat: https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.94/bin/apache-tomcat-9.0.94.zip
 
