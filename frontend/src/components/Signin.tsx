@@ -59,7 +59,7 @@ export default function SignIn({ setAuth }) {
     }
 
     return (
-        <Card className="mx-auto max-w-sm">
+        <Card className="mx-auto max-w-sm mt-[calc(45vh/2)]">
             <CardHeader>
                 <CardTitle className="text-2xl text-center">Login</CardTitle>
                 <CardDescription className="text-left">
