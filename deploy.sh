@@ -1,6 +1,12 @@
 #!/bin/bash
 
+# Default debug flag
 DEBUG=false
+
+# Check for command-line argument
+if [ "$1" = "--debug" ]; then
+    DEBUG=true
+fi
 
 TOMCAT_HOME="/usr/local/apache-tomcat-9.0.94"
 PROJECT_DIR="$TOMCAT_HOME/webapps/SmartHomes"

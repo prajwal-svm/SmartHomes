@@ -1,67 +1,51 @@
 import { useState } from 'react';
-import { MoreHorizontal, Eye, Edit, Trash2, ShoppingCart, ChevronLeft, ChevronRight } from "lucide-react";
+import { MoreHorizontal, Eye, Edit, Trash2, ChevronLeft } from "lucide-react";
+import { Link } from 'react-router-dom';
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table";
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast"
-import { Link } from 'react-router-dom';
 
-export default function Catalog({ products, refetchProducts }) {
+interface Product {
+    ProductID: number;
+    ProductModelName: string;
+    ProductCategory: string;
+    ProductPrice: number;
+    ProductImage: string;
+    ProductDescription: string;
+    ProductOnSale: boolean;
+    ManufacturerName: string;
+    ManufacturerRebate: boolean;
+    Inventory: number;
+}
+
+export default function Catalog({ products, refetchProducts }: { products: Product[], refetchProducts: () => void }) {
     const { toast } = useToast();
-    const [selectedProduct, setSelectedProduct] = useState(null);
-    const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
-    const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-    const [editedProduct, setEditedProduct] = useState(null);
-    const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+    const [isViewDialogOpen, setIsViewDialogOpen] = useState<boolean>(false);
+    const [isEditDialogOpen, setIsEditDialogOpen] = useState<boolean>(false);
+    const [editedProduct, setEditedProduct] = useState<Product | null>(null);
 
-    const handleView = (product) => {
+    const handleView = (product: Product) => {
         setSelectedProduct(product);
-        setCurrentImageIndex(0);
         setIsViewDialogOpen(true);
     };
 
-    const handleEdit = (product) => {
+    const handleEdit = (product: Product) => {
         setEditedProduct({ ...product });
         setIsEditDialogOpen(true);
     };
 
-    const handleDelete = async (productId) => {
-        const result = await fetch('http://localhost:8080/SmartHomes/products/' + productId, {
+    const handleDelete = async (productId: number) => {
+        const result = await fetch(`http://localhost:8080/SmartHomes/products/${productId}`, {
             method: 'DELETE',
         });
 
@@ -70,26 +54,20 @@ export default function Catalog({ products, refetchProducts }) {
         toast({
             title: "Product Deleted",
             description: "The product has been successfully deleted.",
-            variant: "success",
+            variant: "default",
         });
 
         await refetchProducts();
     };
 
     const handleSaveEdit = async () => {
-        // Implement save logic here
-        console.log('Saving edited product:', editedProduct);
-        const result = await fetch('http://localhost:8080/SmartHomes/products/' + editedProduct.id, {
+        if (!editedProduct) return; // Ensure editedProduct is not null
+        const result = await fetch(`http://localhost:8080/SmartHomes/products/${editedProduct.ProductID}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-                ...editedProduct,
-                features: editedProduct.features.join(','),
-                accessories: editedProduct.accessories.join(','),
-                images: editedProduct.images.join(','),
-            }),
+            body: JSON.stringify(editedProduct),
         });
 
         const data = await result.json();
@@ -99,42 +77,30 @@ export default function Catalog({ products, refetchProducts }) {
         await refetchProducts();
     };
 
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setEditedProduct(prev => ({ ...prev, [name]: value }));
-    };
-
-    const handleArrayInputChange = (e, field) => {
-        const { value } = e.target;
-        setEditedProduct(prev => ({
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const { name, value, type, checked } = e.target;
+        setEditedProduct(prev => prev ? {
             ...prev,
-            [field]: value.split(',').map(item => item.trim())
-        }));
+            [name]: type === 'checkbox' ? checked : value
+        } : null);
     };
 
-    const nextImage = () => {
-        setCurrentImageIndex((prevIndex) =>
-            (prevIndex + 1) % selectedProduct.images.length
-        );
-    };
-
-    const prevImage = () => {
-        setCurrentImageIndex((prevIndex) =>
-            (prevIndex - 1 + selectedProduct.images.length) % selectedProduct.images.length
-        );
-    };
-
-    const handleAddProduct = async (e) => {
+    const handleAddProduct = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        const formData = new FormData(e.target);
-        const newProduct = Object.fromEntries(formData.entries());
-        newProduct.price = parseFloat(newProduct.price);
-        newProduct.features = newProduct.features.split(',').map(item => item.trim());
-        newProduct.accessories = newProduct.accessories.split(',').map(item => item.trim());
-        newProduct.images = newProduct.images.split(',').map(item => item.trim());
-        newProduct.id = Date.now();
+        const formData = new FormData(e.currentTarget);
+        const newProduct: Product = {
+            ProductID: 0, // Assuming ID is generated on the server
+            ProductModelName: formData.get("ProductModelName") as string,
+            ProductCategory: formData.get("ProductCategory") as string,
+            ProductPrice: parseFloat(formData.get("ProductPrice") as string),
+            ProductImage: formData.get("ProductImage") as string,
+            ProductDescription: formData.get("ProductDescription") as string,
+            ProductOnSale: formData.get("ProductOnSale") === 'on',
+            ManufacturerName: formData.get("ManufacturerName") as string,
+            ManufacturerRebate: formData.get("ManufacturerRebate") === 'on',
+            Inventory: parseInt(formData.get("Inventory") as string),
+        };
 
-        console.log('Adding new product:', newProduct);
         const result = await fetch('http://localhost:8080/SmartHomes/products', {
             method: 'POST',
             headers: {
@@ -144,7 +110,7 @@ export default function Catalog({ products, refetchProducts }) {
         });
 
         const data = await result.json();
-        console.log(data);
+        console.log("data", data);
         refetchProducts();
     }
 
@@ -169,88 +135,40 @@ export default function Catalog({ products, refetchProducts }) {
                         <form onSubmit={handleAddProduct}>
                             <div className="grid gap-4 py-4">
                                 <div className="grid grid-cols-4 items-center gap-4">
-                                    <Label htmlFor="name" >
-                                        Name
-                                    </Label>
-                                    <Input
-                                        id="name"
-                                        name="name"
-                                        className="col-span-3"
-                                    />
+                                    <Label htmlFor="ProductModelName">Name</Label>
+                                    <Input id="ProductModelName" name="ProductModelName" className="col-span-3" required />
                                 </div>
                                 <div className="grid grid-cols-4 items-center gap-4">
-                                    <Label htmlFor="price" >
-                                        Price
-                                    </Label>
-                                    <Input
-                                        id="price"
-                                        name="price"
-                                        type="number"
-                                        className="col-span-3"
-                                    />
+                                    <Label htmlFor="ProductCategory">Category</Label>
+                                    <Input id="ProductCategory" name="ProductCategory" className="col-span-3" required />
                                 </div>
                                 <div className="grid grid-cols-4 items-center gap-4">
-                                    <Label htmlFor="category" >
-                                        Category
-                                    </Label>
-                                    <Input
-                                        id="category"
-                                        name="category"
-                                        className="col-span-3"
-                                    />
+                                    <Label htmlFor="ProductPrice">Price</Label>
+                                    <Input id="ProductPrice" name="ProductPrice" type="number" step="0.01" className="col-span-3" required />
                                 </div>
                                 <div className="grid grid-cols-4 items-center gap-4">
-                                    <Label htmlFor="brand" >
-                                        Brand
-                                    </Label>
-                                    <Input
-                                        id="brand"
-                                        name="brand"
-                                        className="col-span-3"
-                                    />
+                                    <Label htmlFor="ProductOnSale">On Sale</Label>
+                                    <Checkbox id="ProductOnSale" name="ProductOnSale" />
                                 </div>
                                 <div className="grid grid-cols-4 items-center gap-4">
-                                    <Label htmlFor="description" >
-                                        Description
-                                    </Label>
-                                    <Textarea
-                                        id="description"
-                                        name="description"
-                                        className="col-span-3"
-                                    />
+                                    <Label htmlFor="ManufacturerName">Manufacturer</Label>
+                                    <Input id="ManufacturerName" name="ManufacturerName" className="col-span-3" required />
                                 </div>
                                 <div className="grid grid-cols-4 items-center gap-4">
-                                    <Label htmlFor="features" >
-                                        Features
-                                    </Label>
-                                    <Textarea
-                                        id="features"
-                                        name="features"
-                                        className="col-span-3"
-                                        placeholder="Enter features separated by commas"
-                                    />
+                                    <Label htmlFor="ManufacturerRebate">Rebate</Label>
+                                    <Checkbox id="ManufacturerRebate" name="ManufacturerRebate" />
                                 </div>
                                 <div className="grid grid-cols-4 items-center gap-4">
-                                    <Label htmlFor="accessories" >
-                                        Accessories
-                                    </Label>
-                                    <Textarea
-                                        id="accessories"
-                                        name="accessories"
-                                        placeholder="Enter accessories separated by commas"
-                                        className="col-span-3"
-                                    />
+                                    <Label htmlFor="Inventory">Inventory</Label>
+                                    <Input id="Inventory" name="Inventory" type="number" className="col-span-3" required />
                                 </div>
                                 <div className="grid grid-cols-4 items-center gap-4">
-                                    <Label htmlFor="images" >
-                                        Images
-                                    </Label>
-                                    <Textarea
-                                        id="images"
-                                        name="images"
-                                        placeholder="Enter image URLs separated by commas"
-                                        className="col-span-3"
-                                    />
+                                    <Label htmlFor="ProductImage">Image URL</Label>
+                                    <Input id="ProductImage" name="ProductImage" className="col-span-3" required />
+                                </div>
+                                <div className="grid grid-cols-4 items-center gap-4">
+                                    <Label htmlFor="ProductDescription">Description</Label>
+                                    <Textarea id="ProductDescription" name="ProductDescription" className="col-span-3" required />
                                 </div>
                             </div>
                             <DialogFooter>
@@ -261,43 +179,37 @@ export default function Catalog({ products, refetchProducts }) {
                 </Dialog>
             </CardHeader>
             <CardContent>
-                <Table className="w-full text-left text-black">
+                <Table>
                     <TableHeader>
                         <TableRow>
                             <TableHead>Image</TableHead>
                             <TableHead>Name</TableHead>
                             <TableHead>Category</TableHead>
                             <TableHead>Price</TableHead>
+                            <TableHead>Inventory</TableHead>
                             <TableHead>Actions</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {products.map((product) => (
                             <TableRow key={product.ProductID}>
-                                <TableCell className="font-medium">
-                                    <img
-                                        src={`/${product.ProductImage}`}
-                                        alt={product.ProductModelName}
-                                        className="w-12 h-12 object-cover rounded-lg"
-                                    />
-                                </TableCell>
-                                <TableCell className="font-medium">{product.ProductModelName}</TableCell>
                                 <TableCell>
-                                    <Badge variant="secondary">
-                                        {product.ProductCategory}
-                                    </Badge>
+                                    <img src={product.ProductImage} alt={product.ProductModelName} className="w-12 h-12 object-cover rounded-lg" />
+                                </TableCell>
+                                <TableCell>{product.ProductModelName}</TableCell>
+                                <TableCell>
+                                    <Badge variant="secondary">{product.ProductCategory}</Badge>
                                 </TableCell>
                                 <TableCell>${product.ProductPrice.toFixed(2)}</TableCell>
+                                <TableCell>{product.Inventory}</TableCell>
                                 <TableCell>
                                     <DropdownMenu>
                                         <DropdownMenuTrigger asChild>
-                                            <Button aria-haspopup="true" size="icon" variant="ghost">
+                                            <Button variant="ghost" className="h-8 w-8 p-0">
                                                 <MoreHorizontal className="h-4 w-4" />
-                                                <span className="sr-only">Actions</span>
                                             </Button>
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent align="end">
-                                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
                                             <DropdownMenuItem onClick={() => handleView(product)}>
                                                 <Eye className="mr-2 h-4 w-4" /> View
                                             </DropdownMenuItem>
@@ -323,159 +235,71 @@ export default function Catalog({ products, refetchProducts }) {
 
             {/* View Dialog */}
             <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
-                <DialogContent className="sm:max-w-[425px]">
+                <DialogContent>
                     <DialogHeader>
                         <DialogTitle>{selectedProduct?.ProductModelName}</DialogTitle>
-                        <DialogDescription>
-                            <div className="relative">
-                                <img
-                                    src={selectedProduct?.ProductImage || "/placeholder.svg"}
-                                    alt={`${selectedProduct?.ProductModelName} - Image ${currentImageIndex + 1}`}
-                                    className="w-full h-[200px] object-cover mb-4"
-                                />
-                                <Button size="icon" variant="outline" className="absolute left-2 top-1/2 transform -translate-y-1/2" onClick={prevImage}>
-                                    <ChevronLeft className="h-4 w-4" />
-                                </Button>
-                                <Button size="icon" variant="outline" className="absolute right-2 top-1/2 transform -translate-y-1/2" onClick={nextImage}>
-                                    <ChevronRight className="h-4 w-4" />
-                                </Button>
-                            </div>
-                            <p className="text-sm text-gray-600 mb-2">{selectedProduct?.ProductDescription}</p>
-                            <p className="text-lg font-bold mb-2">${selectedProduct?.ProductPrice.toFixed(2)}</p>
-                            <p className="text-sm mb-2"><strong>Brand:</strong> {selectedProduct?.ProductBrand}</p>
-                            <p className="text-sm mb-2"><strong>Category:</strong> {selectedProduct?.ProductCategory}</p>
-                            <div className="mb-2">
-                                <strong>Features:</strong>
-                                <ul className="list-disc list-inside">
-                                    {selectedProduct?.features?.map((feature, index) => (
-                                        <li key={index} className="text-sm">{feature}</li>
-                                    ))}
-                                </ul>
-                            </div>
-                            {selectedProduct?.Accessories.length > 0 && (
-                                <div className="mb-2">
-                                    <strong>Accessories:</strong>
-                                    <ul className="list-disc list-inside">
-                                        {selectedProduct?.Accessories.map((accessory, index) => (
-                                            <li key={index} className="text-sm">{accessory.AccessoryID}</li>
-                                        ))}
-                                    </ul>
-                                </div>
-                            )}
-                            <Button className="w-full flex items-center justify-center mt-4">
-                                <ShoppingCart className="mr-2 h-4 w-4" /> Add to Cart
-                            </Button>
-                        </DialogDescription>
                     </DialogHeader>
+                    <div className="grid gap-4">
+                        <img src={selectedProduct?.ProductImage} alt={selectedProduct?.ProductModelName} className="w-full h-48 object-cover rounded-lg" />
+                        <p>{selectedProduct?.ProductDescription}</p>
+                        <div className="flex justify-between">
+                            <span>Price: ${selectedProduct?.ProductPrice.toFixed(2)}</span>
+                            <span>Category: {selectedProduct?.ProductCategory}</span>
+                        </div>
+                        <div className="flex justify-between">
+                            <span>Manufacturer: {selectedProduct?.ManufacturerName}</span>
+                            <span>Inventory: {selectedProduct?.Inventory}</span>
+                        </div>
+                        <div className="flex justify-between">
+                            <span>On Sale: {selectedProduct?.ProductOnSale ? 'Yes' : 'No'}</span>
+                            <span>Manufacturer Rebate: {selectedProduct?.ManufacturerRebate ? 'Yes' : 'No'}</span>
+                        </div>
+                    </div>
                 </DialogContent>
             </Dialog>
 
             {/* Edit Dialog */}
             <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-                <DialogContent className="sm:max-w-[425px]">
+                <DialogContent>
                     <DialogHeader>
                         <DialogTitle>Edit Product</DialogTitle>
                     </DialogHeader>
                     <div className="grid gap-4 py-4">
                         <div className="grid grid-cols-4 items-center gap-4">
-                            <Label htmlFor="name" >
-                                Name
-                            </Label>
-                            <Input
-                                id="name"
-                                name="name"
-                                value={editedProduct?.ProductModelName || ''}
-                                onChange={handleInputChange}
-                                className="col-span-3"
-                            />
+                            <Label htmlFor="edit-ProductModelName">Model Name</Label>
+                            <Input id="edit-ProductModelName" name="ProductModelName" value={editedProduct?.ProductModelName || ''} onChange={handleInputChange} className="col-span-3" />
                         </div>
                         <div className="grid grid-cols-4 items-center gap-4">
-                            <Label htmlFor="price" >
-                                Price
-                            </Label>
-                            <Input
-                                id="price"
-                                name="price"
-                                type="number"
-                                value={editedProduct?.ProductPrice || ''}
-                                onChange={handleInputChange}
-                                className="col-span-3"
-                            />
+                            <Label htmlFor="edit-ProductCategory">Category</Label>
+                            <Input id="edit-ProductCategory" name="ProductCategory" value={editedProduct?.ProductCategory || ''} onChange={handleInputChange} className="col-span-3" />
                         </div>
                         <div className="grid grid-cols-4 items-center gap-4">
-                            <Label htmlFor="category" >
-                                Category
-                            </Label>
-                            <Input
-                                id="category"
-                                name="category"
-                                value={editedProduct?.ProductCategory || ''}
-                                onChange={handleInputChange}
-                                className="col-span-3"
-                            />
+                            <Label htmlFor="edit-ProductPrice">Price</Label>
+                            <Input id="edit-ProductPrice" name="ProductPrice" type="number" step="0.01" value={editedProduct?.ProductPrice || ''} onChange={handleInputChange} className="col-span-3" />
                         </div>
                         <div className="grid grid-cols-4 items-center gap-4">
-                            <Label htmlFor="brand" >
-                                Brand
-                            </Label>
-                            <Input
-                                id="brand"
-                                name="brand"
-                                value={editedProduct?.ManufacturerName || ''}
-                                onChange={handleInputChange}
-                                className="col-span-3"
-                            />
+                            <Label htmlFor="edit-ProductOnSale">On Sale</Label>
+                            <Checkbox id="edit-ProductOnSale" name="ProductOnSale" checked={editedProduct?.ProductOnSale || false} onCheckedChange={(checked) => handleInputChange({ target: { name: 'ProductOnSale', type: 'checkbox', checked } })} />
                         </div>
                         <div className="grid grid-cols-4 items-center gap-4">
-                            <Label htmlFor="description" >
-                                Description
-                            </Label>
-                            <Textarea
-                                id="description"
-                                name="description"
-                                value={editedProduct?.ProductDescription || ''}
-                                onChange={handleInputChange}
-                                className="col-span-3"
-                            />
+                            <Label htmlFor="edit-ManufacturerName">Manufacturer</Label>
+                            <Input id="edit-ManufacturerName" name="ManufacturerName" value={editedProduct?.ManufacturerName || ''} onChange={handleInputChange} className="col-span-3" />
                         </div>
                         <div className="grid grid-cols-4 items-center gap-4">
-                            <Label htmlFor="features" >
-                                Features
-                            </Label>
-                            <Textarea
-                                id="features"
-                                name="features"
-                                value={editedProduct?.features?.join(', ') || ''}
-                                onChange={(e) => handleArrayInputChange(e, 'features')}
-                                className="col-span-3"
-                                placeholder="Enter features separated by commas"
-                            />
+                            <Label htmlFor="edit-ManufacturerRebate">Manufacturer Rebate</Label>
+                            <Checkbox id="edit-ManufacturerRebate" name="ManufacturerRebate" checked={editedProduct?.ManufacturerRebate || false} onCheckedChange={(checked) => handleInputChange({ target: { name: 'ManufacturerRebate', type: 'checkbox', checked } })} />
                         </div>
                         <div className="grid grid-cols-4 items-center gap-4">
-                            <Label htmlFor="accessories" >
-                                Accessories
-                            </Label>
-                            <Textarea
-                                id="accessories"
-                                name="accessories"
-                                value={editedProduct?.Accessories?.join(', ') || ''}
-                                onChange={(e) => handleArrayInputChange(e, 'accessories')}
-                                className="col-span-3"
-                                placeholder="Enter accessories separated by commas"
-                            />
+                            <Label htmlFor="edit-Inventory">Inventory</Label>
+                            <Input id="edit-Inventory" name="Inventory" type="number" value={editedProduct?.Inventory || ''} onChange={handleInputChange} className="col-span-3" />
                         </div>
                         <div className="grid grid-cols-4 items-center gap-4">
-                            <Label htmlFor="images" >
-                                Images
-                            </Label>
-                            <Textarea
-                                id="images"
-                                name="images"
-                                value={editedProduct?.ProductImage}
-                                onChange={(e) => handleArrayInputChange(e, 'images')}
-                                className="col-span-3"
-                                placeholder="Enter image URLs separated by commas"
-                            />
+                            <Label htmlFor="edit-ProductImage">Image URL</Label>
+                            <Input id="edit-ProductImage" name="ProductImage" value={editedProduct?.ProductImage || ''} onChange={handleInputChange} className="col-span-3" />
+                        </div>
+                        <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="edit-ProductDescription">Description</Label>
+                            <Textarea id="edit-ProductDescription" name="ProductDescription" value={editedProduct?.ProductDescription || ''} onChange={handleInputChange} className="col-span-3" />
                         </div>
                     </div>
                     <DialogFooter>

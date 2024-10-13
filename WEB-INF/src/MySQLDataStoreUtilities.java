@@ -2,6 +2,11 @@ package utilities;
 
 import java.sql.*;
 import java.util.*;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Element;
 
 public class MySQLDataStoreUtilities {
     private static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
@@ -150,5 +155,40 @@ public class MySQLDataStoreUtilities {
         }
 
         return records;
+    }
+
+    public static void loadProductsFromXML(String xmlFilePath) throws Exception {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        Document doc = builder.parse(xmlFilePath);
+        doc.getDocumentElement().normalize();
+
+        NodeList productList = doc.getElementsByTagName("Product");
+
+        for (int i = 0; i < productList.getLength(); i++) {
+            Element product = (Element) productList.item(i);
+            String modelName = product.getElementsByTagName("ProductModelName").item(0).getTextContent();
+            String category = product.getElementsByTagName("ProductCategory").item(0).getTextContent();
+            double price = Double.parseDouble(product.getElementsByTagName("ProductPrice").item(0).getTextContent());
+            boolean onSale = Boolean.parseBoolean(product.getElementsByTagName("ProductOnSale").item(0).getTextContent());
+            String manufacturerName = product.getElementsByTagName("ManufacturerName").item(0).getTextContent();
+            boolean manufacturerRebate = Boolean.parseBoolean(product.getElementsByTagName("ManufacturerRebate").item(0).getTextContent());
+            int inventory = Integer.parseInt(product.getElementsByTagName("Inventory").item(0).getTextContent());
+            String image = product.getElementsByTagName("ProductImage").item(0).getTextContent();
+            String description = product.getElementsByTagName("ProductDescription").item(0).getTextContent();
+
+            Map<String, Object> columnValues = new HashMap<>();
+            columnValues.put("ProductModelName", modelName);
+            columnValues.put("ProductCategory", category);
+            columnValues.put("ProductPrice", price);
+            columnValues.put("ProductOnSale", onSale);
+            columnValues.put("ManufacturerName", manufacturerName);
+            columnValues.put("ManufacturerRebate", manufacturerRebate);
+            columnValues.put("Inventory", inventory);
+            columnValues.put("ProductImage", image);
+            columnValues.put("ProductDescription", description);
+
+            insertRecord("Products", columnValues); // Insert each product into the database
+        }
     }
 }

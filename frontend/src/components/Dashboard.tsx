@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, KeyboardEvent, MouseEvent } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
     CircleUser,
@@ -34,14 +34,82 @@ import {
 import Navigation from "./Navigation";
 import Product from "./Product";
 
-export default function Dashboard({ products }) {
-    const [_products, setProducts] = useState(products);
-    const [cart, setCart] = useState(() => {
-        const user = JSON.parse(sessionStorage.getItem('user'));
+interface Suggestion {
+    productModelName: string;
+    productCategory?: string;
+}
+
+const SuggestionDropdown = ({
+    suggestions,
+    onSelect,
+    searchQuery,
+    highlightedIndex
+}: {
+    suggestions: Suggestion[],
+    onSelect: (suggestion: Suggestion) => void,
+    searchQuery: string,
+    highlightedIndex: number
+}) => {
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            className="absolute z-10 w-full top-[50px] bg-white border border-gray-200 rounded-md shadow-lg overflow-hidden"
+        >
+            <ul className="max-h-60 overflow-auto text-sm">
+                {suggestions.map((suggestion, index) => {
+                    const matchIndex = suggestion.productModelName.toLowerCase().indexOf(searchQuery.toLowerCase());
+                    const beforeMatch = suggestion.productModelName.slice(0, matchIndex);
+                    const match = suggestion.productModelName.slice(matchIndex, matchIndex + searchQuery.length);
+                    const afterMatch = suggestion.productModelName.slice(matchIndex + searchQuery.length);
+
+                    return (
+                        <motion.li
+                            key={index}
+                            className={`px-4 py-2 cursor-pointer flex items-center justify-between ${highlightedIndex === index ? 'bg-gray-100' : 'hover:bg-gray-50'}`}
+                            onClick={() => onSelect(suggestion)}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: index * 0.05 }}
+                        >
+                            <div>
+                                <Search className="inline-block h-4 w-4 mr-2 text-gray-400" />
+                                {beforeMatch}
+                                <span className="font-semibold">{match}</span>
+                                {afterMatch}
+                            </div>
+                            <span className="text-xs text-gray-400">{suggestion.productCategory}</span>
+                        </motion.li>
+                    );
+                })}
+            </ul>
+            {suggestions.length > 0 && (
+                <div className="px-4 py-2 text-xs text-gray-500 border-t">
+                    Press <kbd className="px-1 py-0.5 bg-gray-100 border border-gray-300 rounded">↑</kbd> <kbd className="px-1 py-0.5 bg-gray-100 border border-gray-300 rounded">↓</kbd> to navigate, <kbd className="px-1 py-0.5 bg-gray-100 border border-gray-300 rounded">Enter</kbd> to select
+                </div>
+            )}
+        </motion.div>
+    );
+};
+
+interface DashboardProps {
+    products: any[]; 
+}
+
+export default function Dashboard({ products }: DashboardProps) {
+    const [_products, setProducts] = useState<any[]>(products);
+    const [filteredProducts, setFilteredProducts] = useState<any[]>(products);
+    const [cart, setCart] = useState<{ [key: string]: { quantity: number } }>(() => {
+        const user = JSON.parse(sessionStorage.getItem('user') || '{}');
         return user?.cart || {};
     });
-    const [sortOption, setSortOption] = useState("default");
-    const [starFilter, setStarFilter] = useState("all");
+    const [sortOption, setSortOption] = useState<string>("default");
+    const [starFilter, setStarFilter] = useState<string>("all");
+    const [searchQuery, setSearchQuery] = useState<string>("");
+    const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
+    const [highlightedIndex, setHighlightedIndex] = useState<number>(0);
+    const searchInputRef = useRef<HTMLInputElement>(null);
 
     const router = useLocation();
     const category = new URLSearchParams(router.search).get('category');
@@ -57,7 +125,7 @@ export default function Dashboard({ products }) {
                 newCart[id] = { quantity: total };
             }
 
-            const user = JSON.parse(sessionStorage.getItem('user'));
+            const user = JSON.parse(sessionStorage.getItem('user') || '{}');
             user.cart = newCart;
             sessionStorage.setItem('user', JSON.stringify(user));
 
@@ -65,16 +133,59 @@ export default function Dashboard({ products }) {
         });
     };
 
-    const debounceSearch = (value) => {
+    const handleSearch = async (value: string) => {
         const search = value.toLowerCase();
-        const filteredProducts = products.filter(product =>
-            product.ProductModelName.toLowerCase().includes(search)
-        );
-        setProducts(filteredProducts);
+        setSearchQuery(search);
+        if (search.length < 2) {
+            setSuggestions([]);
+            setFilteredProducts(_products);
+            return;
+        }
+        const response = await fetch(`http://localhost:8080/SmartHomes/search-products?query=${encodeURIComponent(search)}`);
+        if (response.ok) {
+            const suggestions = await response.json();
+            setSuggestions(suggestions);
+        } else {
+            console.error('Error fetching product suggestions');
+            setSuggestions([]);
+        }
     };
 
-    const sortProducts = (option) => {
-        const sortedProducts = [..._products];
+    const filterProducts = (query: string) => {
+        const filtered = _products.filter(product =>
+            product.ProductModelName.toLowerCase().includes(query.toLowerCase())
+        );
+        setFilteredProducts(filtered);
+    };
+
+    const handleSuggestionSelect = (suggestion: Suggestion) => {
+        setSearchQuery(suggestion.productModelName);
+        setSuggestions([]);
+        if (searchInputRef.current) {
+            searchInputRef.current.value = suggestion.productModelName;
+        }
+        filterProducts(suggestion.productModelName);
+    };
+
+    const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            setHighlightedIndex(prev => (prev + 1) % suggestions.length);
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            setHighlightedIndex(prev => (prev - 1 + suggestions.length) % suggestions.length);
+        } else if (e.key === 'Enter') {
+            e.preventDefault();
+            if (suggestions[highlightedIndex]) {
+                handleSuggestionSelect(suggestions[highlightedIndex]);
+            } else {
+                filterProducts(searchQuery);
+            }
+        }
+    };
+
+    const sortProducts = (option: string) => {
+        const sortedProducts = [...filteredProducts];
         switch (option) {
             case "price-high-low":
                 sortedProducts.sort((a, b) => b.ProductPrice - a.ProductPrice);
@@ -88,15 +199,15 @@ export default function Dashboard({ products }) {
             default:
                 break;
         }
-        setProducts(sortedProducts);
+        setFilteredProducts(sortedProducts);
     };
 
-    const filterByStars = (stars) => {
+    const filterByStars = (stars: string) => {
         if (stars === "all") {
-            setProducts(products);
+            setFilteredProducts(_products);
         } else {
-            const filtered = products.filter(product => Math.floor(product.RatingAvg) === parseInt(stars));
-            setProducts(filtered);
+            const filtered = _products.filter(product => Math.floor(product.RatingAvg) === parseInt(stars));
+            setFilteredProducts(filtered);
         }
     };
 
@@ -107,6 +218,19 @@ export default function Dashboard({ products }) {
     useEffect(() => {
         filterByStars(starFilter);
     }, [starFilter]);
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (searchInputRef.current && !searchInputRef.current.contains(event.target as Node)) {
+                setSuggestions([]);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
 
     if (products.length === 0) {
         return (
@@ -188,17 +312,28 @@ export default function Dashboard({ products }) {
                     <SheetContent side="left" />
                 </Sheet>
                 <div className="flex w-full items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
-                    <form className="ml-auto flex-1 sm:flex-initial">
-                        <div className="relative">
-                            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                            <Input
-                                type="search"
-                                placeholder="Search products..."
-                                className="pl-8 w-[500px] rounded-full"
-                                onChange={(e) => debounceSearch(e.target.value)}
-                            />
-                        </div>
+                    <form className="ml-auto flex-1 sm:flex-initial relative">
+                        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                        <Input
+                            type="search"
+                            placeholder="Search products..."
+                            className="pl-8 w-[500px] rounded-full"
+                            onChange={(e) => handleSearch(e.target.value)}
+                            onKeyDown={handleKeyDown}
+                            ref={searchInputRef}
+                        />
+                        <AnimatePresence>
+                            {suggestions.length > 0 && (
+                                <SuggestionDropdown
+                                    suggestions={suggestions}
+                                    onSelect={handleSuggestionSelect}
+                                    searchQuery={searchQuery}
+                                    highlightedIndex={highlightedIndex}
+                                />
+                            )}
+                        </AnimatePresence>
                     </form>
+
                     <div className="flex items-center gap-4 relative ml-auto">
                         <Link to="/cart" className="rounded-full relative p-2 bg-secondary">
                             <ShoppingCart className="h-5 w-5" />
@@ -216,9 +351,9 @@ export default function Dashboard({ products }) {
                                     <span className="sr-only">Toggle user menu</span>
                                 </Button>
                                 <div className="text-sm font-medium text-left">
-                                    {sessionStorage.getItem('user') ? JSON.parse(sessionStorage.getItem('user')).FullName : 'Guest'}
+                                    {sessionStorage.getItem('user') ? JSON.parse(sessionStorage.getItem('user') || '{}').FullName : 'Guest'}
                                     <div className="text-xs text-muted-foreground text-left capitalize">
-                                        {sessionStorage.getItem('user') ? JSON.parse(sessionStorage.getItem('user')).UserType : ''}
+                                        {sessionStorage.getItem('user') ? JSON.parse(sessionStorage.getItem('user') || '{}').UserType : ''}
                                     </div>
                                 </div>
                             </div>
@@ -250,7 +385,7 @@ export default function Dashboard({ products }) {
                                     <SelectItem value="4" className="flex items-center gap-2"><span className="text-yellow-400">★★★★</span><span className="text-gray-200">★</span><span className="text-muted-foreground text-xs"> (4+)</span></SelectItem>
                                     <SelectItem value="3" className="flex items-center gap-2"><span className="text-yellow-400">★★★</span><span className="text-gray-200">★★</span><span className="text-muted-foreground text-xs"> (3+)</span></SelectItem>
                                     <SelectItem value="2" className="flex items-center gap-2"><span className="text-yellow-400">★★</span><span className="text-gray-200">★★★</span><span className="text-muted-foreground text-xs"> (2+)</span></SelectItem>
-                                    <SelectItem value="1" className="flex items-center gap-2"><span className="text-yellow-400">★</span><span className="text-gray-200">★★★★</span><span className="text-muted-foreground text-xs"> (1+)</span></SelectItem>
+                                    <SelectItem value="1" className="flex items-center  gap-2"><span className="text-yellow-400">★</span><span className="text-gray-200">★★★★</span><span className="text-muted-foreground text-xs"> (1+)</span></SelectItem>
                                 </SelectContent>
                             </Select>
                             <Select value={sortOption} onValueChange={setSortOption}>
@@ -266,7 +401,7 @@ export default function Dashboard({ products }) {
                             </Select>
                         </div>
                     </div>
-                    {_products.length === 0 && (
+                    {filteredProducts.length === 0 && (
                         <motion.p
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
@@ -289,7 +424,7 @@ export default function Dashboard({ products }) {
                                 }
                             }}
                         >
-                            {_products.filter(product => product.ProductCategory === category || !category).map(product => (
+                            {filteredProducts.filter(product => product.ProductCategory === category || !category).map(product => (
                                 <motion.div
                                     key={product.ProductID}
                                     variants={{

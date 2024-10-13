@@ -1,0 +1,379 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ProductCatalog>
+    <Product>
+        <ProductModelName>Ring Video Doorbell Pro</ProductModelName>
+        <ProductCategory>Smart Doorbells</ProductCategory>
+        <ProductPrice>249.99</ProductPrice>
+        <ProductOnSale>1</ProductOnSale>
+        <ManufacturerName>Ring</ManufacturerName>
+        <ManufacturerRebate>0</ManufacturerRebate>
+        <Inventory>100</Inventory>
+        <ProductImage>ring-pro.jpg</ProductImage>
+        <ProductDescription>Advanced video doorbell with 1080p HD video
+        </ProductDescription>
+    </Product>
+    <Product>
+        <ProductModelName>Nest Hello</ProductModelName>
+        <ProductCategory>Smart Doorbells</ProductCategory>
+        <ProductPrice>229.00</ProductPrice>
+        <ProductOnSale>0</ProductOnSale>
+        <ManufacturerName>Google</ManufacturerName>
+        <ManufacturerRebate>1</ManufacturerRebate>
+        <Inventory>75</Inventory>
+        <ProductImage>nest-hello.jpg</ProductImage>
+        <ProductDescription>Smart doorbell with facial recognition
+        </ProductDescription>
+    </Product>
+    <Product>
+        <ProductModelName>Arlo Essential</ProductModelName>
+        <ProductCategory>Smart Doorbells</ProductCategory>
+        <ProductPrice>199.99</ProductPrice>
+        <ProductOnSale>1</ProductOnSale>
+        <ManufacturerName>Arlo</ManufacturerName>
+        <ManufacturerRebate>0</ManufacturerRebate>
+        <Inventory>80</Inventory>
+        <ProductImage>arlo-essential.jpg</ProductImage>
+        <ProductDescription>Wire-free HD video doorbell</ProductDescription>
+    </Product>
+    <Product>
+        <ProductModelName>Eufy Security</ProductModelName>
+        <ProductCategory>Smart Doorbells</ProductCategory>
+        <ProductPrice>159.99</ProductPrice>
+        <ProductOnSale>0</ProductOnSale>
+        <ManufacturerName>Eufy</ManufacturerName>
+        <ManufacturerRebate>1</ManufacturerRebate>
+        <Inventory>90</Inventory>
+        <ProductImage>eufy-security.jpg</ProductImage>
+        <ProductDescription>2K HD doorbell with local storage
+        </ProductDescription>
+    </Product>
+    <Product>
+        <ProductModelName>RemoBell S</ProductModelName>
+        <ProductCategory>Smart Doorbells</ProductCategory>
+        <ProductPrice>99.00</ProductPrice>
+        <ProductOnSale>1</ProductOnSale>
+        <ManufacturerName>RemoBell</ManufacturerName>
+        <ManufacturerRebate>0</ManufacturerRebate>
+        <Inventory>70</Inventory>
+        <ProductImage>remobell-s.jpg</ProductImage>
+        <ProductDescription>Affordable smart video doorbell</ProductDescription>
+    </Product>
+    <Product>
+        <ProductModelName>August Wi-Fi Smart Lock</ProductModelName>
+        <ProductCategory>Smart Doorlocks</ProductCategory>
+        <ProductPrice>229.99</ProductPrice>
+        <ProductOnSale>0</ProductOnSale>
+        <ManufacturerName>August</ManufacturerName>
+        <ManufacturerRebate>1</ManufacturerRebate>
+        <Inventory>85</Inventory>
+        <ProductImage>august-lock.jpg</ProductImage>
+        <ProductDescription>Wi-Fi enabled smart lock that fits over your
+            existing deadbolt</ProductDescription>
+    </Product>
+    <Product>
+        <ProductModelName>Schlage Encode</ProductModelName>
+        <ProductCategory>Smart Doorlocks</ProductCategory>
+        <ProductPrice>249.99</ProductPrice>
+        <ProductOnSale>1</ProductOnSale>
+        <ManufacturerName>Schlage</ManufacturerName>
+        <ManufacturerRebate>0</ManufacturerRebate>
+        <Inventory>60</Inventory>
+        <ProductImage>schlage-encode.jpg</ProductImage>
+        <ProductDescription>Wi-Fi deadbolt with built-in alarm
+        </ProductDescription>
+    </Product>
+    <Product>
+        <ProductModelName>Yale Assure Lock SL</ProductModelName>
+        <ProductCategory>Smart Doorlocks</ProductCategory>
+        <ProductPrice>299.00</ProductPrice>
+        <ProductOnSale>0</ProductOnSale>
+        <ManufacturerName>Yale</ManufacturerName>
+        <ManufacturerRebate>1</ManufacturerRebate>
+        <Inventory>55</Inventory>
+        <ProductImage>yale-assure.jpg</ProductImage>
+        <ProductDescription>Key-free touchscreen deadbolt</ProductDescription>
+    </Product>
+    <Product>
+        <ProductModelName>Kwikset Halo</ProductModelName>
+        <ProductCategory>Smart Doorlocks</ProductCategory>
+        <ProductPrice>229.00</ProductPrice>
+        <ProductOnSale>1</ProductOnSale>
+        <ManufacturerName>Kwikset</ManufacturerName>
+        <ManufacturerRebate>0</ManufacturerRebate>
+        <Inventory>70</Inventory>
+        <ProductImage>kwikset-halo.jpg</ProductImage>
+        <ProductDescription>Wi-Fi smart lock with touchscreen
+        </ProductDescription>
+    </Product>
+    <Product>
+        <ProductModelName>Ultraloq U-Bolt Pro</ProductModelName>
+        <ProductCategory>Smart Doorlocks</ProductCategory>
+        <ProductPrice>199.00</ProductPrice>
+        <ProductOnSale>0</ProductOnSale>
+        <ManufacturerName>Ultraloq</ManufacturerName>
+        <ManufacturerRebate>1</ManufacturerRebate>
+        <Inventory>65</Inventory>
+        <ProductImage>ultraloq-ubolt.jpg</ProductImage>
+        <ProductDescription>6-in-1 keyless entry smart lock</ProductDescription>
+    </Product>
+    <Product>
+        <ProductModelName>Echo Dot (4th Gen)</ProductModelName>
+        <ProductCategory>Smart Speakers</ProductCategory>
+        <ProductPrice>49.99</ProductPrice>
+        <ProductOnSale>1</ProductOnSale>
+        <ManufacturerName>Amazon</ManufacturerName>
+        <ManufacturerRebate>0</ManufacturerRebate>
+        <Inventory>200</Inventory>
+        <ProductImage>echo-dot.jpg</ProductImage>
+        <ProductDescription>Smart speaker with Alexa</ProductDescription>
+    </Product>
+    <Product>
+        <ProductModelName>Google Nest Mini</ProductModelName>
+        <ProductCategory>Smart Speakers</ProductCategory>
+        <ProductPrice>49.00</ProductPrice>
+        <ProductOnSale>0</ProductOnSale>
+        <ManufacturerName>Google</ManufacturerName>
+        <ManufacturerRebate>1</ManufacturerRebate>
+        <Inventory>180</Inventory>
+        <ProductImage>nest-mini.jpg</ProductImage>
+        <ProductDescription>Compact smart speaker with Google Assistant
+        </ProductDescription>
+    </Product>
+    <Product>
+        <ProductModelName>Apple HomePod Mini</ProductModelName>
+        <ProductCategory>Smart Speakers</ProductCategory>
+        <ProductPrice>99.00</ProductPrice>
+        <ProductOnSale>1</ProductOnSale>
+        <ManufacturerName>Apple</ManufacturerName>
+        <ManufacturerRebate>0</ManufacturerRebate>
+        <Inventory>150</Inventory>
+        <ProductImage>homepod-mini.jpg</ProductImage>
+        <ProductDescription>Compact smart speaker with Siri</ProductDescription>
+    </Product>
+    <Product>
+        <ProductModelName>Sonos One</ProductModelName>
+        <ProductCategory>Smart Speakers</ProductCategory>
+        <ProductPrice>199.00</ProductPrice>
+        <ProductOnSale>0</ProductOnSale>
+        <ManufacturerName>Sonos</ManufacturerName>
+        <ManufacturerRebate>1</ManufacturerRebate>
+        <Inventory>100</Inventory>
+        <ProductImage>sonos-one.jpg</ProductImage>
+        <ProductDescription>Smart speaker with multiple voice assistants
+        </ProductDescription>
+    </Product>
+    <Product>
+        <ProductModelName>Bose Home Speaker 300</ProductModelName>
+        <ProductCategory>Smart Speakers</ProductCategory>
+        <ProductPrice>259.00</ProductPrice>
+        <ProductOnSale>1</ProductOnSale>
+        <ManufacturerName>Bose</ManufacturerName>
+        <ManufacturerRebate>0</ManufacturerRebate>
+        <Inventory>90</Inventory>
+        <ProductImage>bose-300.jpg</ProductImage>
+        <ProductDescription>Compact smart speaker with superior sound
+        </ProductDescription>
+    </Product>
+    <Product>
+        <ProductModelName>Philips Hue White and Color</ProductModelName>
+        <ProductCategory>Smart Lightings</ProductCategory>
+        <ProductPrice>199.99</ProductPrice>
+        <ProductOnSale>0</ProductOnSale>
+        <ManufacturerName>Philips</ManufacturerName>
+        <ManufacturerRebate>1</ManufacturerRebate>
+        <Inventory>150</Inventory>
+        <ProductImage>hue-kit.jpg</ProductImage>
+        <ProductDescription>Starter kit with 3 smart bulbs and bridge
+        </ProductDescription>
+    </Product>
+    <Product>
+        <ProductModelName>LIFX A19</ProductModelName>
+        <ProductCategory>Smart Lightings</ProductCategory>
+        <ProductPrice>59.99</ProductPrice>
+        <ProductOnSale>1</ProductOnSale>
+        <ManufacturerName>LIFX</ManufacturerName>
+        <ManufacturerRebate>0</ManufacturerRebate>
+        <Inventory>120</Inventory>
+        <ProductImage>lifx-a19.jpg</ProductImage>
+        <ProductDescription>Wi-Fi smart bulb with no hub required
+        </ProductDescription>
+    </Product>
+    <Product>
+        <ProductModelName>Sengled Smart LED</ProductModelName>
+        <ProductCategory>Smart Lightings</ProductCategory>
+        <ProductPrice>79.99</ProductPrice>
+        <ProductOnSale>0</ProductOnSale>
+        <ManufacturerName>Sengled</ManufacturerName>
+        <ManufacturerRebate>1</ManufacturerRebate>
+        <Inventory>100</Inventory>
+        <ProductImage>sengled-kit.jpg</ProductImage>
+        <ProductDescription>Starter kit with 2 bulbs and hub
+        </ProductDescription>
+    </Product>
+    <Product>
+        <ProductModelName>Nanoleaf Shapes</ProductModelName>
+        <ProductCategory>Smart Lightings</ProductCategory>
+        <ProductPrice>199.99</ProductPrice>
+        <ProductOnSale>1</ProductOnSale>
+        <ManufacturerName>Nanoleaf</ManufacturerName>
+        <ManufacturerRebate>0</ManufacturerRebate>
+        <Inventory>80</Inventory>
+        <ProductImage>nanoleaf-shapes.jpg</ProductImage>
+        <ProductDescription>Modular smart light panels</ProductDescription>
+    </Product>
+    <Product>
+        <ProductModelName>Yeelight Smart LED Bulb</ProductModelName>
+        <ProductCategory>Smart Lightings</ProductCategory>
+        <ProductPrice>29.99</ProductPrice>
+        <ProductOnSale>0</ProductOnSale>
+        <ManufacturerName>Yeelight</ManufacturerName>
+        <ManufacturerRebate>1</ManufacturerRebate>
+        <Inventory>200</Inventory>
+        <ProductImage>yeelight-bulb.jpg</ProductImage>
+        <ProductDescription>Affordable smart bulb with multiple colors
+        </ProductDescription>
+    </Product>
+    <Product>
+        <ProductModelName>Nest Thermostat</ProductModelName>
+        <ProductCategory>Smart Thermostats</ProductCategory>
+        <ProductPrice>249.99</ProductPrice>
+        <ProductOnSale>1</ProductOnSale>
+        <ManufacturerName>Google</ManufacturerName>
+        <ManufacturerRebate>0</ManufacturerRebate>
+        <Inventory>120</Inventory>
+        <ProductImage>nest-thermostat.jpg</ProductImage>
+        <ProductDescription>Wi-Fi enabled smart thermostat</ProductDescription>
+    </Product>
+    <Product>
+        <ProductModelName>Ecobee3 Lite</ProductModelName>
+        <ProductCategory>Smart Thermostats</ProductCategory>
+        <ProductPrice>199.00</ProductPrice>
+        <ProductOnSale>0</ProductOnSale>
+        <ManufacturerName>Ecobee</ManufacturerName>
+        <ManufacturerRebate>1</ManufacturerRebate>
+        <Inventory>100</Inventory>
+        <ProductImage>ecobee-lite.jpg</ProductImage>
+        <ProductDescription>Wi-Fi enabled smart thermostat with voice control
+        </ProductDescription>
+    </Product>
+    <Product>
+        <ProductModelName>Honeywell Lyric</ProductModelName>
+        <ProductCategory>Smart Thermostats</ProductCategory>
+        <ProductPrice>299.00</ProductPrice>
+        <ProductOnSale>1</ProductOnSale>
+        <ManufacturerName>Honeywell</ManufacturerName>
+        <ManufacturerRebate>0</ManufacturerRebate>
+        <Inventory>80</Inventory>
+        <ProductImage>honeywell-lyric.jpg</ProductImage>
+        <ProductDescription>Wi-Fi enabled smart thermostat with touchscreen
+        </ProductDescription>
+    </Product>
+    <Product>
+        <ProductModelName>Levoit Smart Wi-Fi Thermostat</ProductModelName>
+        <ProductCategory>Smart Thermostats</ProductCategory>
+        <ProductPrice>149.00</ProductPrice>
+        <ProductOnSale>0</ProductOnSale>
+        <ManufacturerName>Levoit</ManufacturerName>
+        <ManufacturerRebate>1</ManufacturerRebate>
+        <Inventory>90</Inventory>
+        <ProductImage>levoit-thermostat.jpg</ProductImage>
+        <ProductDescription>Wi-Fi enabled smart thermostat with voice control
+        </ProductDescription>
+    </Product>
+    <Product>
+        <ProductModelName>Sengled Smart Thermostat</ProductModelName>
+        <ProductCategory>Smart Thermostats</ProductCategory>
+        <ProductPrice>129.99</ProductPrice>
+        <ProductOnSale>1</ProductOnSale>
+        <ManufacturerName>Sengled</ManufacturerName>
+        <ManufacturerRebate>0</ManufacturerRebate>
+        <Inventory>70</Inventory>
+        <ProductImage>sengled-thermostat.jpg</ProductImage>
+        <ProductDescription>Wi-Fi enabled smart thermostat with touchscreen
+        </ProductDescription>
+    </Product>
+    <Product>
+        <ProductModelName>Smart Plug</ProductModelName>
+        <ProductCategory>Accessories</ProductCategory>
+        <ProductPrice>24.99</ProductPrice>
+        <ProductOnSale>1</ProductOnSale>
+        <ManufacturerName>TP-Link</ManufacturerName>
+        <ManufacturerRebate>0</ManufacturerRebate>
+        <Inventory>150</Inventory>
+        <ProductImage>smart-plug.jpg</ProductImage>
+        <ProductDescription>Wi-Fi smart plug for remote control of devices
+        </ProductDescription>
+    </Product>
+    <Product>
+        <ProductModelName>Smart Light Strip</ProductModelName>
+        <ProductCategory>Accessories</ProductCategory>
+        <ProductPrice>39.99</ProductPrice>
+        <ProductOnSale>1</ProductOnSale>
+        <ManufacturerName>Philips</ManufacturerName>
+        <ManufacturerRebate>1</ManufacturerRebate>
+        <Inventory>100</Inventory>
+        <ProductImage>light-strip.jpg</ProductImage>
+        <ProductDescription>Flexible smart light strip with color options
+        </ProductDescription>
+    </Product>
+    <Product>
+        <ProductModelName>Smart Thermometer</ProductModelName>
+        <ProductCategory>Accessories</ProductCategory>
+        <ProductPrice>49.99</ProductPrice>
+        <ProductOnSale>0</ProductOnSale>
+        <ManufacturerName>Govee</ManufacturerName>
+        <ManufacturerRebate>1</ManufacturerRebate>
+        <Inventory>80</Inventory>
+        <ProductImage>smart-thermometer.jpg</ProductImage>
+        <ProductDescription>Smart thermometer with app control
+        </ProductDescription>
+    </Product>
+    <Product>
+        <ProductModelName>Smart Security Camera</ProductModelName>
+        <ProductCategory>Accessories</ProductCategory>
+        <ProductPrice>89.99</ProductPrice>
+        <ProductOnSale>1</ProductOnSale>
+        <ManufacturerName>Arlo</ManufacturerName>
+        <ManufacturerRebate>0</ManufacturerRebate>
+        <Inventory>60</Inventory>
+        <ProductImage>security-camera.jpg</ProductImage>
+        <ProductDescription>HD security camera with night vision
+        </ProductDescription>
+    </Product>
+    <Product>
+        <ProductModelName>Smart Door Sensor</ProductModelName>
+        <ProductCategory>Accessories</ProductCategory>
+        <ProductPrice>29.99</ProductPrice>
+        <ProductOnSale>1</ProductOnSale>
+        <ManufacturerName>Ring</ManufacturerName>
+        <ManufacturerRebate>1</ManufacturerRebate>
+        <Inventory>120</Inventory>
+        <ProductImage>door-sensor.jpg</ProductImage>
+        <ProductDescription>Smart sensor for monitoring door status
+        </ProductDescription>
+    </Product>
+    <Product>
+        <ProductModelName>Smart Video Doorbell Chime</ProductModelName>
+        <ProductCategory>Accessories</ProductCategory>
+        <ProductPrice>49.99</ProductPrice>
+        <ProductOnSale>1</ProductOnSale>
+        <ManufacturerName>Ring</ManufacturerName>
+        <ManufacturerRebate>0</ManufacturerRebate>
+        <Inventory>100</Inventory>
+        <ProductImage>doorbell-chime.jpg</ProductImage>
+        <ProductDescription>Chime for video doorbells to alert you of visitors
+        </ProductDescription>
+    </Product>
+    <Product>
+        <ProductModelName>Smart Home Hub</ProductModelName>
+        <ProductCategory>Accessories</ProductCategory>
+        <ProductPrice>99.99</ProductPrice>
+        <ProductOnSale>1</ProductOnSale>
+        <ManufacturerName>Samsung</ManufacturerName>
+        <ManufacturerRebate>1</ManufacturerRebate>
+        <Inventory>80</Inventory>
+        <ProductImage>smart-home-hub.jpg</ProductImage>
+        <ProductDescription>Central hub for connecting and controlling smart
+            devices</ProductDescription>
+    </Product>
+</ProductCatalog>

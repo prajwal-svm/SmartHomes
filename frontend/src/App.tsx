@@ -14,6 +14,8 @@ import Customers from './components/Customers';
 import { Toaster } from "@/components/ui/toaster"
 import Trending from './components/Trending';
 import { Loader2, ShoppingBag, Package, Truck } from 'lucide-react';
+import Inventory from './components/Inventory';
+import SalesReport from './components/SalesReport';
 
 function App() {
   const [auth, setAuth] = useState(sessionStorage.getItem('auth') || false);
@@ -103,6 +105,22 @@ function App() {
           element={
             <ProtectedRoute>
               <Catalog products={products} refetchProducts={fetchProducts} />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/inventory"
+          element={
+            <ProtectedRoute>
+              <Inventory />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/sales-report"
+          element={
+            <ProtectedRoute>
+              <SalesReport />
             </ProtectedRoute>
           }
         />

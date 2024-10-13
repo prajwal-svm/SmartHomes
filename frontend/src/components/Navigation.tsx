@@ -120,6 +120,16 @@ export default function Navigation() {
                         <NavigationMenuLink href="/catalog" className={navigationMenuTriggerStyle()}>Catalog</NavigationMenuLink>
                     </NavigationMenuItem>
                 )}
+                 {userType === 'storemanager' && (
+                    <NavigationMenuItem className="bg-white">
+                        <NavigationMenuLink href="/inventory" className={navigationMenuTriggerStyle()}>Inventory</NavigationMenuLink>
+                    </NavigationMenuItem>
+                )}
+                 {userType === 'storemanager' && (
+                    <NavigationMenuItem className="bg-white">
+                        <NavigationMenuLink href="/sales-report" className={navigationMenuTriggerStyle()}>Sales Report</NavigationMenuLink>
+                    </NavigationMenuItem>
+                )}
                 {userType === 'salesperson' && (
                     <NavigationMenuItem className="bg-white">
                         <NavigationMenuLink href="/customers" className={navigationMenuTriggerStyle()}>Customers</NavigationMenuLink>
