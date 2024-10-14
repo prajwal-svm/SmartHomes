@@ -196,10 +196,11 @@ public class ProductsServlet extends HttpServlet {
 
         PrintWriter out = response.getWriter();
         try {
+            int productId = MySQLDataStoreUtilities.insertRecord("Products", filterProductForDatabase(newProduct));
+            newProduct.put("ProductID", productId);
+            
             appendProductToXML(newProduct);
 
-            int productId = MySQLDataStoreUtilities.insertRecord("Products", newProduct);
-            newProduct.put("ProductID", productId);
             out.print(gson.toJson(newProduct));
             response.setStatus(HttpServletResponse.SC_CREATED);
         } catch (Exception e) {
@@ -207,48 +208,6 @@ public class ProductsServlet extends HttpServlet {
             out.print("{\"error\": \"Error: " + e.getMessage() + "\"}");
         }
         out.flush();
-    }
-
-    private void appendProductToXML(Map<String, Object> product) throws Exception {
-        DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-        org.w3c.dom.Document doc;
-
-        File xmlFile = new File(xmlFilePath);
-        if (xmlFile.exists()) {
-            doc = docBuilder.parse(xmlFile);
-        } else {
-            doc = docBuilder.newDocument();
-            org.w3c.dom.Element rootElement = doc.createElement("ProductCatalog");
-            doc.appendChild(rootElement);
-        }
-
-        org.w3c.dom.Element productElement = doc.createElement("Product");
-
-        appendElement(doc, productElement, "ProductModelName", (String) product.get("ProductModelName"));
-        appendElement(doc, productElement, "ProductCategory", (String) product.get("ProductCategory"));
-        appendElement(doc, productElement, "ProductPrice", product.get("ProductPrice").toString());
-        appendElement(doc, productElement, "ProductOnSale", product.get("ProductOnSale").toString());
-        appendElement(doc, productElement, "ManufacturerName", (String) product.get("ManufacturerName"));
-        appendElement(doc, productElement, "ManufacturerRebate", product.get("ManufacturerRebate").toString());
-        appendElement(doc, productElement, "Inventory", product.get("Inventory").toString());
-        appendElement(doc, productElement, "ProductImage", (String) product.get("ProductImage"));
-        appendElement(doc, productElement, "ProductDescription", (String) product.get("ProductDescription"));
-
-        doc.getDocumentElement().appendChild(productElement);
-
-        TransformerFactory transformerFactory = TransformerFactory.newInstance();
-        Transformer transformer = transformerFactory.newTransformer();
-        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-        DOMSource source = new DOMSource(doc);
-        StreamResult result = new StreamResult(xmlFile);
-        transformer.transform(source, result);
-    }
-
-    private void appendElement(org.w3c.dom.Document doc, org.w3c.dom.Element parent, String elementName, String textContent) {
-        org.w3c.dom.Element element = doc.createElement(elementName);
-        element.setTextContent(textContent);
-        parent.appendChild(element);
     }
 
     protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -269,7 +228,12 @@ public class ProductsServlet extends HttpServlet {
                 Map<String, Object> updatedProduct = gson.fromJson(reader, new TypeToken<Map<String, Object>>(){}.getType());
 
                 try {
-                    int rowsAffected = MySQLDataStoreUtilities.updateRecord("Products", updatedProduct, "ProductID = " + productId);
+                    // Update XML first
+                    updateProductInXML(productId, updatedProduct);
+
+                    // Then update database
+                    Map<String, Object> filteredProduct = filterProductForDatabase(updatedProduct);
+                    int rowsAffected = MySQLDataStoreUtilities.updateRecord("Products", filteredProduct, "ProductID = " + productId);
                     if (rowsAffected > 0) {
                         List<Map<String, Object>> products = MySQLDataStoreUtilities.getRecords("Products", "ProductID = " + productId);
                         out.print(gson.toJson(products.get(0)));
@@ -277,9 +241,9 @@ public class ProductsServlet extends HttpServlet {
                         response.setStatus(HttpServletResponse.SC_NOT_FOUND);
                         out.print("{\"error\": \"Product not found\"}");
                     }
-                } catch (SQLException e) {
+                } catch (Exception e) {
                     response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                    out.print("{\"error\": \"Database error: " + e.getMessage() + "\"}");
+                    out.print("{\"error\": \"Error: " + e.getMessage() + "\"}");
                 }
             } else {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -303,17 +267,36 @@ public class ProductsServlet extends HttpServlet {
             String[] splits = pathInfo.split("/");
             if (splits.length == 2) {
                 int productId = Integer.parseInt(splits[1]);
+                boolean xmlDeleted = false;
                 try {
+                    // Delete from XML first
+                    deleteProductFromXML(productId);
+                    xmlDeleted = true;
+
+                    // Then delete from database
                     int rowsAffected = MySQLDataStoreUtilities.deleteRecord("Products", "ProductID = " + productId);
                     if (rowsAffected > 0) {
                         out.print("{\"message\": \"Product deleted successfully\"}");
                     } else {
+                        // If product was not in database, revert XML deletion
+                        if (xmlDeleted) {
+                            revertXMLDeletion(productId);
+                        }
                         response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                        out.print("{\"error\": \"Product not found\"}");
+                        out.print("{\"error\": \"Product not found in database\"}");
                     }
-                } catch (SQLException e) {
+                } catch (Exception e) {
+                    // If there was an error deleting from database, revert XML deletion
+                    if (xmlDeleted) {
+                        try {
+                            revertXMLDeletion(productId);
+                        } catch (Exception revertException) {
+                            // Log the revert exception
+                            e.addSuppressed(revertException);
+                        }
+                    }
                     response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                    out.print("{\"error\": \"Database error: " + e.getMessage() + "\"}");
+                    out.print("{\"error\": \"Error: " + e.getMessage() + "\"}");
                 }
             } else {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -321,5 +304,203 @@ public class ProductsServlet extends HttpServlet {
             }
         }
         out.flush();
+    }
+
+    private Map<String, Object> filterProductForDatabase(Map<String, Object> product) {
+        Map<String, Object> filteredProduct = new HashMap<>(product);
+        filteredProduct.remove("RatingAvg");
+        filteredProduct.remove("TotalRatings");
+        filteredProduct.remove("Accessories");
+        return filteredProduct;
+    }
+
+    private void appendProductToXML(Map<String, Object> product) throws Exception {
+        DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+        org.w3c.dom.Document doc;
+
+        File xmlFile = new File(xmlFilePath);
+        if (xmlFile.exists()) {
+            doc = docBuilder.parse(xmlFile);
+        } else {
+            doc = docBuilder.newDocument();
+            org.w3c.dom.Element rootElement = doc.createElement("ProductCatalog");
+            doc.appendChild(rootElement);
+        }
+
+        org.w3c.dom.Element productElement = doc.createElement("Product");
+
+        appendElement(doc, productElement, "ProductID", String.valueOf((int) Double.parseDouble(product.get("ProductID").toString())));
+        appendElement(doc, productElement, "ProductModelName", (String) product.get("ProductModelName"));
+        appendElement(doc, productElement, "ProductCategory", (String) product.get("ProductCategory"));
+appendElement(doc, productElement, "ProductPrice", product.get("ProductPrice").toString());
+        appendElement(doc, productElement, "ProductOnSale", product.get("ProductOnSale").toString());
+        appendElement(doc, productElement, "ManufacturerName", (String) product.get("ManufacturerName"));
+        appendElement(doc, productElement, "ManufacturerRebate", product.get("ManufacturerRebate").toString());
+        appendElement(doc, productElement, "Inventory", product.get("Inventory").toString());
+        appendElement(doc, productElement, "ProductImage", (String) product.get("ProductImage"));
+        appendElement(doc, productElement, "ProductDescription", (String) product.get("ProductDescription"));
+
+        doc.getDocumentElement().appendChild(productElement);
+
+        writeXmlFile(doc);
+    }
+
+    private void updateProductInXML(int productId, Map<String, Object> updatedProduct) throws Exception {
+        DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+        org.w3c.dom.Document doc = docBuilder.parse(new File(xmlFilePath));
+
+        NodeList products = doc.getElementsByTagName("Product");
+        boolean productFound = false;
+
+        for (int i = 0; i < products.getLength(); i++) {
+            Element product = (Element) products.item(i);
+            NodeList productIdNodes = product.getElementsByTagName("ProductID");
+            
+            if (productIdNodes.getLength() > 0) {
+                String xmlProductId = productIdNodes.item(0).getTextContent();
+                // Compare the integer part of the ProductID
+                if (xmlProductId.split("\\.")[0].equals(String.valueOf(productId))) {
+                    updateProductElement(product, updatedProduct);
+                    productFound = true;
+                    break;
+                }
+            } else {
+                // If ProductID is not present, try to match based on other attributes
+                String productName = getElementTextContent(product, "ProductModelName");
+                String productCategory = getElementTextContent(product, "ProductCategory");
+                String productPrice = getElementTextContent(product, "ProductPrice");
+                
+                if (productName.equals(updatedProduct.get("ProductModelName")) &&
+                    productCategory.equals(updatedProduct.get("ProductCategory")) &&
+                    productPrice.equals(updatedProduct.get("ProductPrice").toString())) {
+                    
+                    updateProductElement(product, updatedProduct);
+                    productFound = true;
+                    break;
+                }
+            }
+        }
+
+        if (!productFound) {
+            // If the product wasn't found, add it as a new product
+            Element newProduct = doc.createElement("Product");
+            appendElement(doc, newProduct, "ProductID", String.valueOf(productId));
+            updateProductElement(newProduct, updatedProduct);
+            doc.getDocumentElement().appendChild(newProduct);
+        }
+
+        writeXmlFile(doc);
+    }
+
+    private void deleteProductFromXML(int productId) throws Exception {
+        DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+        org.w3c.dom.Document doc = docBuilder.parse(new File(xmlFilePath));
+
+        NodeList products = doc.getElementsByTagName("Product");
+        boolean productFound = false;
+
+        for (int i = 0; i < products.getLength(); i++) {
+            Element product = (Element) products.item(i);
+            NodeList productIdNodes = product.getElementsByTagName("ProductID");
+            
+            if (productIdNodes.getLength() > 0) {
+                String xmlProductId = productIdNodes.item(0).getTextContent();
+                // Compare the integer part of the ProductID
+                if (xmlProductId.split("\\.")[0].equals(String.valueOf(productId))) {
+                    product.getParentNode().removeChild(product);
+                    productFound = true;
+                    break;
+                }
+            } else {
+                // If ProductID is not present, try to match based on other attributes
+                String productName = getElementTextContent(product, "ProductModelName");
+                String productCategory = getElementTextContent(product, "ProductCategory");
+                String productPrice = getElementTextContent(product, "ProductPrice");
+                
+                // Fetch the product details from the database
+                List<Map<String, Object>> dbProducts = MySQLDataStoreUtilities.getRecords("Products", "ProductID = " + productId);
+                if (!dbProducts.isEmpty()) {
+                    Map<String, Object> dbProduct = dbProducts.get(0);
+                    
+                    // Compare the XML product with the database product
+                    if (productName.equals(dbProduct.get("ProductModelName")) &&
+                        productCategory.equals(dbProduct.get("ProductCategory")) &&
+                        productPrice.equals(dbProduct.get("ProductPrice").toString())) {
+                        
+                        product.getParentNode().removeChild(product);
+                        productFound = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (!productFound) {
+            throw new Exception("Product with ID " + productId + " not found in XML file");
+        }
+
+        writeXmlFile(doc);
+    }
+
+    private void revertXMLDeletion(int productId) throws Exception {
+        // Retrieve the product data from the database
+        List<Map<String, Object>> products = MySQLDataStoreUtilities.getRecords("Products", "ProductID = " + productId);
+        if (!products.isEmpty()) {
+            Map<String, Object> product = products.get(0);
+            // Re-add the product to the XML file
+            appendProductToXML(product);
+        } else {
+            throw new Exception("Unable to revert XML deletion: Product not found in database");
+        }
+    }
+
+    private void updateProductElement(Element product, Map<String, Object> updatedProduct) {
+        updateElement(product, "ProductID", String.valueOf((int) Double.parseDouble(updatedProduct.get("ProductID").toString())));
+        updateElement(product, "ProductModelName", (String) updatedProduct.get("ProductModelName"));
+        updateElement(product, "ProductCategory", (String) updatedProduct.get("ProductCategory"));
+        updateElement(product, "ProductPrice", updatedProduct.get("ProductPrice").toString());
+        updateElement(product, "ProductOnSale", updatedProduct.get("ProductOnSale").toString());
+        updateElement(product, "ManufacturerName", (String) updatedProduct.get("ManufacturerName"));
+        updateElement(product, "ManufacturerRebate", updatedProduct.get("ManufacturerRebate").toString());
+        updateElement(product, "Inventory", updatedProduct.get("Inventory").toString());
+        updateElement(product, "ProductImage", (String) updatedProduct.get("ProductImage"));
+        updateElement(product, "ProductDescription", (String) updatedProduct.get("ProductDescription"));
+    }
+
+    private void appendElement(org.w3c.dom.Document doc, Element parent, String elementName, String textContent) {
+        Element element = doc.createElement(elementName);
+        element.setTextContent(textContent);
+        parent.appendChild(element);
+    }
+
+    private void updateElement(Element parent, String elementName, String textContent) {
+        NodeList elements = parent.getElementsByTagName(elementName);
+        if (elements.getLength() > 0) {
+            elements.item(0).setTextContent(textContent);
+        } else {
+            Element newElement = parent.getOwnerDocument().createElement(elementName);
+            newElement.setTextContent(textContent);
+            parent.appendChild(newElement);
+        }
+    }
+
+    private String getElementTextContent(Element parent, String elementName) {
+        NodeList elements = parent.getElementsByTagName(elementName);
+        if (elements.getLength() > 0) {
+            return elements.item(0).getTextContent();
+        }
+        return "";
+    }
+
+    private void writeXmlFile(org.w3c.dom.Document doc) throws TransformerException {
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        Transformer transformer = transformerFactory.newTransformer();
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        DOMSource source = new DOMSource(doc);
+        StreamResult result = new StreamResult(new File(xmlFilePath));
+        transformer.transform(source, result);
     }
 }

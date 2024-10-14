@@ -61,7 +61,7 @@ export default function Catalog({ products, refetchProducts }: { products: Produ
     };
 
     const handleSaveEdit = async () => {
-        if (!editedProduct) return; // Ensure editedProduct is not null
+        if (!editedProduct) return; 
         const result = await fetch(`http://localhost:8080/SmartHomes/products/${editedProduct.ProductID}`, {
             method: 'PUT',
             headers: {
