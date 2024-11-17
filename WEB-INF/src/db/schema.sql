@@ -122,3 +122,22 @@ CREATE TABLE StoreManagers (
     FOREIGN KEY (UserID) REFERENCES Users(UserID),
     FOREIGN KEY (StoreID) REFERENCES Stores(StoreID)
 );
+
+CREATE TABLE CustomerServiceTickets (
+    TicketID INT PRIMARY KEY AUTO_INCREMENT,
+    TransactionID INT NOT NULL,
+    CustomerID INT NOT NULL,
+    Description TEXT NOT NULL,
+    ImageURL VARCHAR(255) NOT NULL,
+    Status ENUM('Pending', 'Processing', 'Completed') DEFAULT 'Pending',
+    CreatedDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    LastUpdated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    AIDecision ENUM('Refund Order', 'Replace Order', 'Escalate to Human Agent') NOT NULL,
+    AgentNotes TEXT,
+    ResolutionDate TIMESTAMP,
+    FOREIGN KEY (TransactionID) REFERENCES Transactions(TransactionID),
+    FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID),
+    INDEX idx_status (Status),
+    INDEX idx_transaction (TransactionID),
+    INDEX idx_customer (CustomerID)
+);

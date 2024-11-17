@@ -13,9 +13,10 @@ import Customers from './components/Customers';
 
 import { Toaster } from "@/components/ui/toaster"
 import Trending from './components/Trending';
-import { Loader2, ShoppingBag, Package, Truck } from 'lucide-react';
+import { ShoppingBag, Package, Truck } from 'lucide-react';
 import Inventory from './components/Inventory';
 import SalesReport from './components/SalesReport';
+import ReplacementStatus from './components/ReplacementStatus';
 
 function App() {
   const [auth, setAuth] = useState(sessionStorage.getItem('auth') || false);
@@ -136,9 +137,13 @@ function App() {
           path="/trending"
           element={
             <ProtectedRoute>
-              <Trending products={products} />
+              <Trending />
             </ProtectedRoute>
           }
+        />
+        <Route
+          path="/replacement-status/:ticketNumber"
+          element={<ReplacementStatus />}
         />
       </Routes>
       <Toaster />

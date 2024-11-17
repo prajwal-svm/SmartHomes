@@ -19,6 +19,9 @@ import {
     DropdownMenuItem,
     DropdownMenuLabel,
     DropdownMenuSeparator,
+    DropdownMenuSub,
+    DropdownMenuSubContent,
+    DropdownMenuSubTrigger,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
@@ -33,6 +36,8 @@ import {
 
 import Navigation from "./Navigation";
 import Product from "./Product";
+import OpenTicketDrawer from "./OpenTicketDrawer";
+import TicketStatusDrawer from "./TicketStatus";
 
 interface Suggestion {
     productModelName: string;
@@ -94,7 +99,7 @@ const SuggestionDropdown = ({
 };
 
 interface DashboardProps {
-    products: any[]; 
+    products: any[];
 }
 
 export default function Dashboard({ products }: DashboardProps) {
@@ -110,6 +115,8 @@ export default function Dashboard({ products }: DashboardProps) {
     const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
     const [highlightedIndex, setHighlightedIndex] = useState<number>(0);
     const searchInputRef = useRef<HTMLInputElement>(null);
+    const [openTicketDrawerOpen, setOpenTicketDrawerOpen] = useState(false)
+    const [ticketStatusDrawerOpen, setTicketStatusDrawerOpen] = useState(false)
 
     const router = useLocation();
     const category = new URLSearchParams(router.search).get('category');
@@ -358,14 +365,28 @@ export default function Dashboard({ products }: DashboardProps) {
                                 </div>
                             </div>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="z-[60]">
+                        <DropdownMenuContent align="end" className="w-[180px] z-[60] cursor-pointer">
                             <DropdownMenuLabel>My Account</DropdownMenuLabel>
                             <DropdownMenuSeparator />
+                            <DropdownMenuSub>
+                                <DropdownMenuSubTrigger className="cursor-pointer">
+                                    <span>Customer Service</span>
+                                </DropdownMenuSubTrigger>
+                                <DropdownMenuSubContent>
+                                    <DropdownMenuItem asChild className="cursor-pointer" onSelect={() => setOpenTicketDrawerOpen(true)}>
+                                        <span>Open a Ticket</span>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem asChild className="cursor-pointer" onSelect={() => setTicketStatusDrawerOpen(true)}>
+                                        <span>Status of a Ticket</span>
+                                    </DropdownMenuItem>
+                                </DropdownMenuSubContent>
+                            </DropdownMenuSub>
                             <DropdownMenuItem onClick={() => {
                                 sessionStorage.removeItem('auth');
                                 sessionStorage.removeItem('user');
                                 window.location.href = '/signin';
-                            }}>Logout</DropdownMenuItem>
+                            }} className="cursor-pointer">Logout</DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </div>
@@ -447,6 +468,14 @@ export default function Dashboard({ products }: DashboardProps) {
             <footer className="flex items-center justify-center h-16 bg-background text-muted-foreground">
                 <p className="text-sm text-center">&copy; 2024 SmartHomes. All rights reserved.</p>
             </footer>
+            {openTicketDrawerOpen && <OpenTicketDrawer
+                isOpen={openTicketDrawerOpen}
+                onClose={() => setOpenTicketDrawerOpen(false)}
+            />}
+            {ticketStatusDrawerOpen && <TicketStatusDrawer
+                isOpen={ticketStatusDrawerOpen}
+                onClose={() => setTicketStatusDrawerOpen(false)}
+            />}
         </motion.div>
     );
 }
