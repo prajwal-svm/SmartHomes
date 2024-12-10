@@ -17,6 +17,7 @@ import { ShoppingBag, Package, Truck } from 'lucide-react';
 import Inventory from './components/Inventory';
 import SalesReport from './components/SalesReport';
 import ReplacementStatus from './components/ReplacementStatus';
+import RecommendationsPage from './components/Recommendations';
 
 function App() {
   const [auth, setAuth] = useState(sessionStorage.getItem('auth') || false);
@@ -138,6 +139,14 @@ function App() {
           element={
             <ProtectedRoute>
               <Trending />
+            </ProtectedRoute>
+          }
+        />
+         <Route
+          path="/recommendations"
+          element={
+            <ProtectedRoute>
+              <RecommendationsPage />
             </ProtectedRoute>
           }
         />

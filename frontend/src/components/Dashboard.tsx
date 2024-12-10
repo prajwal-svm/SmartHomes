@@ -8,6 +8,7 @@ import {
     Package2,
     Search,
     ShoppingCart,
+    Sparkles,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -341,7 +342,15 @@ export default function Dashboard({ products }: DashboardProps) {
                         </AnimatePresence>
                     </form>
 
+
                     <div className="flex items-center gap-4 relative ml-auto">
+                        <Link
+                            to="/recommendations"
+                            className="rounded-full relative p-2  bg-secondary"
+                        >
+                            <Sparkles className="h-5 w-5" />
+                            <span className="sr-only">AI Recommendations</span>
+                        </Link>
                         <Link to="/cart" className="rounded-full relative p-2 bg-secondary">
                             <ShoppingCart className="h-5 w-5" />
                             <Badge className="absolute -top-2 -right-1 px-[6px]" variant="destructive">

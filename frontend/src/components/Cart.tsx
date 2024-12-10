@@ -106,7 +106,7 @@ export default function Cart({ products }) {
                                             </div>
                                             <div>
                                                 <h2 className="text-2xl font-semibold">{item.ProductModelName}</h2>
-                                                <p className="text-gray-600">{item.ProductDescription}</p>
+                                                <p className="text-gray-600 line-clamp-2">{item.ProductDescription}</p>
                                                 <div className="flex items-center">
                                                     {Array.from({ length: 5 }, (_, index) => (
                                                         <span key={index} className={index < item.RatingAvg ? "text-yellow-400" : "text-gray-300"}>

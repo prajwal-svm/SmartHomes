@@ -16,6 +16,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { motion, AnimatePresence } from 'framer-motion'
+import { Badge } from './ui/badge'
 
 interface ProductProps {
     ProductID: string | number
@@ -39,7 +40,7 @@ interface Accessory {
 
 const WARRANTY_PRICE = 49.99
 
-const StarRating: React.FC<{ rating: number, totalRatings: number }> = ({ rating, totalRatings = 0 }) => {
+const StarRating: React.FC<{ rating: number, totalRatings: number, similarity_score: number }> = ({ rating, totalRatings = 0, similarity_score = 1 }) => {
     return (
         <div className="flex items-center my-1">
             {[1, 2, 3, 4, 5].map((star) => (
@@ -49,23 +50,26 @@ const StarRating: React.FC<{ rating: number, totalRatings: number }> = ({ rating
                 />
             ))}
             <span className="ml-2 text-sm text-gray-600 text-muted-foreground">{totalRatings === 0 ? window?.location.pathname === '/trending' ? '' : 'No reviews' : `${totalRatings} reviews`}</span>
+            <Badge className="ml-auto bg-lime-200 text-black">
+                        Score: {((similarity_score - 1) * 100).toFixed(0)}%
+                    </Badge>
         </div>
     )
 }
 
-export default function Product({ 
-    ProductID, 
-    ProductModelName, 
-    ProductDescription, 
-    ProductPrice, 
+export default function Product({
+    ProductID,
+    ProductModelName,
+    ProductDescription,
+    ProductPrice,
     ProductImage,
-    imageUrls, 
-    Accessories = [], 
-    quantity = 0, 
-    setCart, 
+    Accessories = [],
+    quantity = 0,
+    setCart,
     products,
     RatingAvg,
-    TotalRatings
+    TotalRatings,
+    similarity_score
 }: ProductProps) {
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [currentImageIndex, setCurrentImageIndex] = useState(0)
@@ -127,24 +131,24 @@ export default function Product({
             transition={{ duration: 0.5 }}
         >
             <Card className="w-[320px] overflow-hidden">
-                <motion.img 
-                    src={ProductImage ? `/${ProductImage}` :`image${Math.floor(Math.random() * (14) + 1)}.jpg`} 
-                    alt={ProductModelName} 
+                <motion.img
+                    src={ProductImage ? `/${ProductImage}` : `image${Math.floor(Math.random() * (14) + 1)}.jpg`}
+                    alt={ProductModelName}
                     className="w-full h-[200px] object-cover"
                     whileHover={{ scale: 1.05 }}
                     transition={{ duration: 0.3 }}
                 />
                 <CardContent className="p-4 text-left h-100">
-                    <h3 className="text-lg font-semibold mb-2 line-clamp-1">{ProductModelName}</h3>
-                    <StarRating rating={RatingAvg} totalRatings={TotalRatings} />
+                    <h3 className="text-lg font-semibold mb-2 line-clamp-1">{ProductModelName} </h3>
+                    <StarRating rating={RatingAvg} totalRatings={TotalRatings} similarity_score={similarity_score} />
                     <p className="text-sm text-gray-600 mb-2 line-clamp-1">{truncateDescription(ProductDescription, 100)}</p>
-                    <motion.p 
+                    <motion.p
                         className="text-lg font-bold"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: 0.2 }}
                     >
-                        ${totalPrice.toFixed(2)}
+                        ${totalPrice?.toFixed?.(2)}
                         <span className="text-xs text-gray-500 ml-2 line-through">${
                             Math.round(ProductPrice + (0.3 * ProductPrice))
                         }</span>
@@ -165,10 +169,10 @@ export default function Product({
                                         <div className="w-2/3">
                                             <div className="relative">
                                                 <AnimatePresence mode="wait">
-                                                    <motion.img 
+                                                    <motion.img
                                                         key={currentImageIndex}
-                                                        src={images[currentImageIndex]} 
-                                                        alt={ProductModelName} 
+                                                        src={images[currentImageIndex]}
+                                                        alt={ProductModelName}
                                                         className="w-full h-[400px] object-cover mb-4"
                                                         initial={{ opacity: 0 }}
                                                         animate={{ opacity: 1 }}
@@ -185,13 +189,13 @@ export default function Product({
                                             </div>
                                             <StarRating rating={RatingAvg} totalRatings={TotalRatings} />
                                             <p className="text-sm text-gray-600 mb-2">{ProductDescription}</p>
-                                            <motion.p 
+                                            <motion.p
                                                 className="text-lg font-bold mb-4 text-gray-900"
                                                 initial={{ opacity: 0 }}
                                                 animate={{ opacity: 1 }}
                                                 transition={{ delay: 0.2 }}
                                             >
-                                                ${totalPrice.toFixed(2)}
+                                                ${totalPrice?.toFixed?.(2)}
                                                 <span className="text-xs text-gray-500 ml-2 line-through">${
                                                     Math.round(ProductPrice + (0.3 * ProductPrice))
                                                 }</span>
@@ -227,8 +231,8 @@ export default function Product({
                                             )}
                                             <ScrollArea className="h-[400px] w-full">
                                                 {contents.map((accessory, i) => (
-                                                    <motion.div 
-                                                        key={i} 
+                                                    <motion.div
+                                                        key={i}
                                                         className="flex items-center justify-between space-x-2 mb-4 text-left"
                                                         initial={{ opacity: 0, y: 20 }}
                                                         animate={{ opacity: 1, y: 0 }}

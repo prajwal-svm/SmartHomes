@@ -18,7 +18,7 @@ import java.util.Base64;
 @MultipartConfig
 public class CustomerServiceServlet extends HttpServlet {
     private Gson gson = new Gson();
-    private static final String OPENAI_API_KEY = "sk-dev-xxx";
+    private static final String OPENAI_API_KEY = "sk-dev-********";
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 

@@ -49,8 +49,8 @@ export default function Catalog({ products, refetchProducts }: { products: Produ
             method: 'DELETE',
         });
 
-        const data = await result.json();
-
+        await result.json();
+        
         toast({
             title: "Product Deleted",
             description: "The product has been successfully deleted.",
